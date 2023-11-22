@@ -67,12 +67,16 @@ The Grad-Cam method part is managed by Sulaymane.
 ## How to use the code
 
 # LIME 
-The Grad-Cam method part is managed by Sulaymane.
+The LIME part is managed by Adèle.
 
 ## My part summarised :
 
- - [x] Read the SHAP article
- - [x] Try to get implemented code for Grad-Cam in python
- - [ ] Run the code and **correct** errors
+ - [x] Do some research on neural networks
+ - [x] Read the LIME article
+ - [x] Get implemented codes on github
+ - [x] Test the code, correct it
+ - [x] Try it with some images
+ - [ ] Undertand the code
+ - [ ] Try again with different neural networks  
 
 ## How to use the code
