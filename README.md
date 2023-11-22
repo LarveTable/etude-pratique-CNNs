@@ -33,3 +33,46 @@ The `vgg19_gradcam.py` script will apply the **VGG19** model to the image to get
 - ~~With Poetry :~~
 
 **WIP**
+
+# SHAP
+The Grad-Cam method part is managed by Sulaymane.
+
+## My part summarised :
+
+ - [x] Read the SHAP article
+ - [x] Try to get implemented code for Grad-Cam in python
+ - [x] Run the code and **correct** errors
+ - [x] Customise the code and make it work with multiple images
+ - [ ] Create a **working** package with poetry
+ - [ ] Find comparison points between each algorithm
+ - [ ] Compare each algorithm
+ - [ ] *(maybe)* Implement a way to switch between CNNs to add more comparison
+
+## How to use the code
+
+# Integrated Gradient 
+The Grad-Cam method part is managed by Sulaymane.
+
+## My part summarised :
+
+ - [x] Read the SHAP article
+ - [x] Try to get implemented code for Grad-Cam in python
+ - [x] Run the code and **correct** errors
+ - [x] Customise the code and make it work with multiple images
+ - [ ] Create a **working** package with poetry
+ - [ ] Find comparison points between each algorithm
+ - [ ] Compare each algorithm
+ - [ ] *(maybe)* Implement a way to switch between CNNs to add more comparison
+
+## How to use the code
+
+# LIME 
+The Grad-Cam method part is managed by Sulaymane.
+
+## My part summarised :
+
+ - [x] Read the SHAP article
+ - [x] Try to get implemented code for Grad-Cam in python
+ - [ ] Run the code and **correct** errors
+
+## How to use the code
