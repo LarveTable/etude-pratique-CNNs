@@ -51,7 +51,7 @@ The Grad-Cam method part is managed by Sulaymane.
  - [x] Try to run SHAP examples 
  - [x] Use shap with vgg16
  - [x] Change code to use it with vgg19
- - [ ] Use shap with vgg19 -> Error : kernel keeps dying for no reason :/ 
+ - [x] Use shap with vgg19 -> Error : kernel keeps dying for no reason :/ -> fixed (reducing the nsample 
  - [ ] Make the VGG19 work, not in notebook but within a poetry project
  - [ ] Select images remotely fetching from the imagenet database 
 
