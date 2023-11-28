@@ -3,13 +3,11 @@
 > explanation project. By Adèle, Sulaymane, Taha, Yorick.
 
 ## TODO :
- - [ ] Faire fonctionner ce git
- - [ ] Utiliser vgg19 pour tout le monde 
- - [ ] Utiliser les mêmes images 
- - [ ] Creer des packages pour chaque méthode
- - [ ] Créer un script principal important chaque méthode en tant que librairie 
+ - [x] Faire fonctionner ce git
+ - [x] Utiliser vgg19 pour tout le monde 
+ - [x] Utiliser les mêmes images 
+ - [ ] Creer des packages ou projet poetry pour chaque méthode 
  - [ ] 
-
 
 # Grad-Cam
 The Grad-Cam method part is managed by Yorick.
