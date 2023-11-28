@@ -21,7 +21,7 @@ This section will regroup a synthesis of what I've done so far, and some explana
  - [x] Try to get implemented code for Grad-Cam in python
  - [x] Run the code and **correct** errors
  - [x] Customise the code and make it work with multiple images
- - [ ] Create a **working** package with poetry
+ - [x] Create a **working** poetry-ready folder
  - [ ] Find comparison points between each algorithm
  - [ ] Compare each algorithm
  - [ ] *(maybe)* Implement a way to switch between CNNs to add more comparison
