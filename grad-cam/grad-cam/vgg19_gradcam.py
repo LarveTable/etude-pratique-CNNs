@@ -114,7 +114,7 @@ def process_image(image_to_process, file_name) :
     """
     
     #interpolate
-    img = cv2.imread('./data/images/'+file_name)
+    img = cv2.imread('grad-cam/data/images/'+file_name)
     
     """
     #Only for demonstration
@@ -131,11 +131,11 @@ def process_image(image_to_process, file_name) :
     superimposed_img = heatmap * 0.4 + img
 
     #Save the resulted grad-cam image
-    cv2.imwrite('./results/gradcam_'+file_name, superimposed_img) 
+    cv2.imwrite('grad-cam/results/gradcam_'+file_name, superimposed_img) 
 
 #Export all the results in a txt file
 def export_preds_to_file():
-    path = "./results/preds_results.txt"
+    path = "grad-cam/results/preds_results.txt"
     try:
         # Open the file in write mode
         with open(path, 'w') as file:

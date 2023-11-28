@@ -21,5 +21,5 @@ def delete_files_in_folder(folder_path):
         except Exception as e:
             print(f"Error deleting {file_name}: {e}")
 
-delete_files_in_folder('./data/images')
-delete_files_in_folder('./results')
+delete_files_in_folder('grad-cam/data/images')
+delete_files_in_folder('grad-cam/results')

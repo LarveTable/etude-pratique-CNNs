@@ -7,8 +7,8 @@ from rename_all_files import rename_files
 from vgg19_gradcam import export_preds_to_file
 
 #Image folder path
-#print(os.getcwd())
-folder_path = './data/images'
+print(os.getcwd())
+folder_path = 'grad-cam/data/images'
 
 #Rename every file in numeric order to later match them with their prediction
 rename_files(folder_path)
@@ -27,7 +27,7 @@ if (files != []):
                                     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
     # define the images dataset
-    dataset = datasets.ImageFolder(root='./data/', transform=transform)
+    dataset = datasets.ImageFolder(root='grad-cam/data/', transform=transform)
 
     # define the dataloader to load the images
     dataloader = data.DataLoader(dataset=dataset, shuffle=False, batch_size=1)
