@@ -83,7 +83,7 @@ The LIME part is managed by Adèle.
  - [x] Get implemented codes on github
  - [x] Test the code, correct it
  - [x] Try it with some images
- - [ ] Undertand the code
- - [ ] Try again with different neural networks  
+ - [x] Understand the code
+ - [x] Try again with different neural networks : VGG19
 
 ## How to use the code
