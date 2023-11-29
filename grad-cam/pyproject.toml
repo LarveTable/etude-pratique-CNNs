@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "grad-cam"
+version = "0.1.0"
+description = "This is the first version of my package to test the Grad-Cam method on CNNs. The main script ‘predict_batch’ will generate predictions and superimposed heat maps for every image in ‘data/images’."
+authors = ["Yorick Charlery (credits to Stepan Ulyanin for the Grad-Cam implementation)."]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+opencv-python = "^4.8.1.78"
+numpy = "^1.26.2"
+torch = "^2.1.1"
+torchvision = "^0.16.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
