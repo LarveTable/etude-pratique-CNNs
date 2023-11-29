@@ -5,14 +5,14 @@ from torchvision.models import vgg19
 from torchvision.models import VGG19_Weights
 import numpy as np
 
-#String variableto store the predictions
+# string variableto store the predictions
 pred_res = ""
 
 def process_image(image_to_process, file_name) :
 
     global pred_res
 
-    #dissect the vgg19 network
+    # dissect the vgg19 network
 
     class VGG(nn.Module):
         def __init__(self):
@@ -66,19 +66,23 @@ def process_image(image_to_process, file_name) :
     # get the most likely prediction of the model
     pred = vgg(image_to_process)
 
-    #Get the class_id whith the most probability
+    # get the top 5 class_ids whith their matched probability
     pred2 = pred.squeeze(0).softmax(0)
-    class_id = pred2.argmax().item()
-    score = pred2[class_id].item()
+    top_5_conf, i = pred2.topk(5)
 
-    #Get the matched category name from the matching class_id
-    category_name = VGG19_Weights.DEFAULT.meta["categories"][class_id]
+    pred_res += "Prediction for "+file_name+" : \n"
 
-    #Write the prediction into the pred_res variable
-    pred_res += ("Prediction for "+file_name+f" : {category_name} / {100 * score:.1f}%\n")
+    # for each class_id, add them to the result with its associated score
+    itr = 0
+    for x in i:
+        # ask the included categories to match the class_id with a label
+        category_name = VGG19_Weights.DEFAULT.meta["categories"][x.item()]
+        score = top_5_conf[itr].item()
+        # write the prediction into the pred_res variable
+        pred_res += f"- {category_name} / {100 * score:.1f}%\n"
+        itr=itr+1
 
-    #Facultatif
-    print(f"Prediction : {category_name}: {100 * score:.1f}%")
+    pred_res += "\n"
 
     # get the gradient of the output with respect to the parameters of the model
     pred[:, 386].backward()
@@ -113,7 +117,7 @@ def process_image(image_to_process, file_name) :
     plt.show()
     """
     
-    #interpolate
+    # interpolate
     img = cv2.imread('grad-cam/data/images/'+file_name)
     
     """
@@ -123,23 +127,23 @@ def process_image(image_to_process, file_name) :
     cv2.waitKey(0)
     """
     
-    #Superimpose the heatmap on the image
+    # superimpose the heatmap on the image
     heatmap = np.asarray(heatmap)
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
     heatmap = np.uint8(255 * heatmap)
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
     superimposed_img = heatmap * 0.4 + img
 
-    #Save the resulted grad-cam image
+    # save the resulted grad-cam image
     cv2.imwrite('grad-cam/results/gradcam_'+file_name, superimposed_img) 
 
-#Export all the results in a txt file
+# export all the results in a txt file
 def export_preds_to_file():
     path = "grad-cam/results/preds_results.txt"
     try:
-        # Open the file in write mode
+        # open the file in write mode
         with open(path, 'w') as file:
-            # Write the string to the file
+            # write the string to the file
             file.write(pred_res)
         print(f'Successfully exported to {path}')
     except Exception as e:
