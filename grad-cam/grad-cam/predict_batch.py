@@ -7,7 +7,8 @@ from rename_all_files import rename_files
 from vgg19_gradcam import export_preds_to_file
 
 # image folder path
-print(os.getcwd())
+if (os.getcwd() == os.path.abspath('../grad-cam')):
+    os.chdir('..')
 folder_path = 'grad-cam/data/images'
 
 # rename every file in numeric order to later match them with their prediction
