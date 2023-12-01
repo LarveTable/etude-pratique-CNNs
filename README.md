@@ -27,7 +27,7 @@ Credits to [Stepan Ulyanin](https://medium.com/@stepanulyanin/implementing-grad-
 
 ## How to use the code
 
- - With GitHub (you need to install all the dependencies **by yourself**) :
+ - With **GitHub** (you need to install all the dependencies **by yourself**) :
 
 Get the [grad-cam folder](https://github.com/LarveTable/etude-pratique-CNNs/tree/21a1fdaff7529f685fdb3f1e3cab8b9a136c9b0b/grad-cam) from the **main** branch
 
@@ -38,7 +38,7 @@ The `vgg19_gradcam.py` script will apply the **VGG19** model to the image to get
  If you want to **try it with your own images**, just add them in the *images* folder. 
  You are also able to **delete every files** in the `data/images` and `results` folders using the script `reset_all_files.py`.
 
-- With Poetry :
+- With **Poetry** :
 
 Check that you have **poetry installed** on your system.
 
