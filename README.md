@@ -12,6 +12,7 @@
 # Grad-Cam
 The Grad-Cam method part is managed by Yorick.
 This section will regroup a synthesis of what I've done so far, and some explanations on how to use the code for my part.
+Credits to [Stepan Ulyanin](https://medium.com/@stepanulyanin/implementing-grad-cam-in-pytorch-ea0937c31e82) for the Grad-Cam implementation. 
 
 ## My part summarised :
 
