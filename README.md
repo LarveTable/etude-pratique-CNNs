@@ -2,6 +2,9 @@
 > Repository to share our codes and other useful files on our CNNs
 > explanation project. By Adèle, Sulaymane, Taha, Yorick.
 
+Repository for our practical study "A Comparative Study of Neural Network Explanation Methods" realized in 2023/2024. In this study, we have compared 4 explaning ai methods according to a group of metrics that we will define in the second part of this project.
+Each folder contains an implementation of a method explaining a prediction of an image in the data folder. The model used is VGG19. 
+
 ## TODO :
  - [x] Faire fonctionner ce git
  - [x] Utiliser vgg19 pour tout le monde 
