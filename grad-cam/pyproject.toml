@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "grad-cam"
+name = "gradcam"
 version = "0.1.0"
 description = "This is the first version of my package to test the Grad-Cam method on CNNs. The main script ‘predict_batch’ will generate predictions and superimposed heat maps for every image in ‘data/images’."
 authors = ["Yorick Charlery (credits to Stepan Ulyanin for the Grad-Cam implementation)."]
