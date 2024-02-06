@@ -4,6 +4,7 @@ import torch.nn as nn
 from torchvision.models import vgg19
 from torchvision.models import VGG19_Weights
 import numpy as np
+import time
 
 # string variableto store the predictions
 pred_res = ""
@@ -84,6 +85,8 @@ def process_image(image_to_process, file_name) :
 
     pred_res += "\n"
 
+    start = time.time()
+
     # get the gradient of the output with respect to the parameters of the model
     pred[:, 386].backward()
 
@@ -133,6 +136,10 @@ def process_image(image_to_process, file_name) :
     heatmap = np.uint8(255 * heatmap)
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
     superimposed_img = heatmap * 0.4 + img
+
+    end = time.time()
+    elapsed = end-start
+    print(f'Temps d\'exécution : {elapsed:.3}ms')
 
     # save the resulted grad-cam image
     cv2.imwrite('grad-cam/results/gradcam_'+file_name, superimposed_img) 
