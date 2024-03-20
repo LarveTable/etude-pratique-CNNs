@@ -41,8 +41,8 @@ if __name__ == '__main__':
 
     # Read and preprocess the image
     img = cv2.imread('examples/' + args.img)
-    if args.model_type == 'inception':
-        img = cv2.resize(img, (299, 299))
+    if args.model_type == 'vgg19':
+        img = cv2.resize(img, (224, 224))
     img = img.astype(np.float32)
     img = img[:, :, (2, 1, 0)]
 
@@ -73,8 +73,9 @@ full_directory_path = os.path.join(outer_directory, args.model_type, inner_direc
 if not os.path.exists(full_directory_path):
     os.makedirs(full_directory_path)
 
-cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/original_' + args.img, img)
+"""cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/original_' + args.img, img)
 cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/gradient_overlay_' + args.img, np.uint8(img_gradient_overlay))
 cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/gradient_' + args.img, np.uint8(img_gradient))
-cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/integrated_gradient_overlay_' + args.img, np.uint8(img_integrated_gradient_overlay))
 cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/integrated_gradient_' + args.img, np.uint8(img_integrated_gradient))
+"""
+cv2.imwrite('results/' + args.model_type + '/' + inner_directory + '/integrated_gradient_overlay_' + args.img, np.uint8(img_integrated_gradient_overlay))
