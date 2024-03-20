@@ -6,12 +6,7 @@ from torchvision.models import VGG19_Weights
 import numpy as np
 import time
 
-# string variableto store the predictions
-pred_res = ""
-
-def process_image(image_to_process, file_name) :
-
-    global pred_res
+def gradcam_process(image_to_process, file_name) :
 
     # dissect the vgg19 network
 
@@ -71,7 +66,7 @@ def process_image(image_to_process, file_name) :
     pred2 = pred.squeeze(0).softmax(0)
     top_5_conf, i = pred2.topk(5)
 
-    pred_res += "Prediction for "+file_name+" : \n"
+    pred_res = "Prediction for "+file_name+" : \n"
 
     # for each class_id, add them to the result with its associated score
     itr = 0
@@ -82,8 +77,6 @@ def process_image(image_to_process, file_name) :
         # write the prediction into the pred_res variable
         pred_res += f"- {category_name} / {100 * score:.1f}%\n"
         itr=itr+1
-
-    pred_res += "\n"
 
     start = time.time()
 
@@ -112,23 +105,9 @@ def process_image(image_to_process, file_name) :
 
     # normalize the heatmap
     heatmap /= torch.max(heatmap)
-
-    """
-    #Only for demonstration
-    # draw the heatmap
-    plt.matshow(heatmap.squeeze())
-    plt.show()
-    """
     
     # interpolate
     img = cv2.imread('grad-cam/data/images/'+file_name)
-    
-    """
-    #Only for demonstration
-    #show the image
-    cv2.imshow('image', img)
-    cv2.waitKey(0)
-    """
     
     # superimpose the heatmap on the image
     heatmap = np.asarray(heatmap)
@@ -144,14 +123,4 @@ def process_image(image_to_process, file_name) :
     # save the resulted grad-cam image
     cv2.imwrite('grad-cam/results/gradcam_'+file_name, superimposed_img) 
 
-# export all the results in a txt file
-def export_preds_to_file():
-    path = "grad-cam/results/preds_results.txt"
-    try:
-        # open the file in write mode
-        with open(path, 'w') as file:
-            # write the string to the file
-            file.write(pred_res)
-        print(f'Successfully exported to {path}')
-    except Exception as e:
-        print(f'Error exporting to {path}: {e}')
+    return superimposed_img, pred_res, elapsed

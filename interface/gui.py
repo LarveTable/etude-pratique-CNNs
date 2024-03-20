@@ -4,20 +4,9 @@ from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushB
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QAction
 
-class MainWindow(QMainWindow):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-
-        # Create a menu bar
-        menubar = self.menuBar()
-
-        # Create File menu
-        file_menu = menubar.addMenu('File')
-
-        # Add actions to File menu
-        action_exit = QAction('Exit', self)
-        action_exit.triggered.connect(self.close)
-        file_menu.addAction(action_exit)
 
         # Retrieve the screen geometry
         screen_geometry = app.primaryScreen().geometry()
