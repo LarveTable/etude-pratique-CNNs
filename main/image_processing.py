@@ -2,7 +2,6 @@ from torchvision import transforms
 from torchvision import datasets
 from torch.utils import data
 import os
-from gradcam.vgg19_gradcam import process_image
 
 def process_dataset(path):
 
