@@ -120,11 +120,11 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     test = heatmap*0.4
 
     # count how many pixels have each color present in the image
-    unique_colors, counts = np.unique(test.reshape(-1, 3), axis=0, return_counts=True)
-    color_counts = dict(zip(map(tuple, unique_colors), counts))
+    # unique_colors, counts = np.unique(test.reshape(-1, 3), axis=0, return_counts=True)
+    # color_counts = dict(zip(map(tuple, unique_colors), counts))
 
     # get the max counts and associated color which corresponds to non affected pixels
-    max_color = max(color_counts, key=color_counts.get)
+    # max_color = max(color_counts, key=color_counts.get)
     # get the max count
     # max_count = color_counts[max_color]
 
@@ -132,12 +132,18 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     non_affected = 0
     for i in range(test.shape[0]):
         for j in range(test.shape[1]):
-            if (test[i][j][0] == max_color[0] and test[i][j][1] == max_color[1] and test[i][j][2] == max_color[2]):
+            if (test[i][j][0] == 51.2 and test[i][j][1] == 0 and test[i][j][2] == 0):
                 non_affected += 1
+                test[i][j][0] = 0
+                test[i][j][1] = 0
+                test[i][j][2] = 0
 
     # get the ratio of non affected pixels
     ratio = non_affected/(test.shape[0]*test.shape[1])
     print(f'Ratio of non affected pixels : {ratio:.3}')
+
+    cv2.imshow('test', test)
+    cv2.waitKey(0)
 
     superimposed_img = heatmap * 0.4 + img
 
