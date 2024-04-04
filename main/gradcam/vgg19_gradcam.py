@@ -117,7 +117,7 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
     # pixelate the heatmap
-    test = heatmap*0.4
+    test = heatmap*0.4 #explanations here : https://medium.com/@Coursesteach/computer-vision-part-13-multiply-by-a-scaler-60627d66c820
 
     # count how many pixels have each color present in the image
     # unique_colors, counts = np.unique(test.reshape(-1, 3), axis=0, return_counts=True)
@@ -142,8 +142,8 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     ratio = non_affected/(test.shape[0]*test.shape[1])
     print(f'Ratio of non affected pixels : {ratio:.3}')
 
-    cv2.imshow('test', test)
-    cv2.waitKey(0)
+    #cv2.imshow('test', test)
+    #cv2.waitKey(0)
 
     superimposed_img = heatmap * 0.4 + img
 
