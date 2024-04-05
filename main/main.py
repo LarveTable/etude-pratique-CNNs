@@ -75,4 +75,5 @@ def write_to_file(directory, file_name, content):
     with open(directory+'/'+file_name, 'w') as file:
         file.write(content)
 
+# for test purposes
 run_comparison(["gradcam"], ["vgg19"], 'main/data')
