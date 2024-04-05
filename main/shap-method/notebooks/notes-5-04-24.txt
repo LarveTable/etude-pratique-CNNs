@@ -1,0 +1,5 @@
+- Fichiers de config 
+- Avoir les 4 résultats côte à côte 
+- scores globaux sur l'ensemble des tests 
+Résultats sous forme de Liste pour chaque prédiction avec les stats et ouvrir l'image juste en dessous ou selectionner les images à comparer
+Config sur le côté 

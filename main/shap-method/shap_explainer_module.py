@@ -7,12 +7,19 @@ from keras.preprocessing import image
 import shap
 import time
 
+import tensorflow as tf
+import tensorflow_datasets as tfds
+
+import matplotlib.pyplot as plt
+
+
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
 # TODO:
 # - surface calculation on image explan
 # - explain list of image and gives csv image_name, time,
+# - benchmark
 
 class shap_explainer:
 
@@ -60,43 +67,19 @@ class shap_explainer:
         self.last_explanation_time = t1 - t0
 
         index_names = np.vectorize(lambda x: self.class_names[str(x)][1])(indexes)
+
         shap_values = [np.swapaxes(np.swapaxes(s, 2, 3), 1, -1) for s in shap_values]
 
         shap.image_plot(shap_values, to_explain, index_names)
 
     # GET temps d'execution de la derniere explication d'image utilisant le modèle
     def get_last_execution_time(self):
-        return self.last_explanation_time;
-
-    # export to csv label of image and data
-    def benchmark_imagenet50(self,n):
-        images = shap.datasets.imagenet50();
-
-        images_name_array=[]
-        times_array=[]
-
-        X = shap.datasets.imagenet50()[0]
-        X /= 255
-        for i in range(n): 
-            to_explain = X[[i]]
-
-            t0 = time.time()
-            e = shap.GradientExplainer((self.model, self.model_layer), self.normalize(X))
-            shap_values, indexes = e.shap_values(
-                self.normalize(to_explain), ranked_outputs=ranked_outputs, nsamples=nsamples
-            )
-
-            tf = (time.time()-t0)
-            times_array.add(tf)
-        print(times_array)
-
+        return self.last_explanation_time
 
 if __name__ == "__main__":
     # Example usage:
     model = models.vgg19(weights=models.VGG19_Weights.DEFAULT)
     model.eval()
     explainer = shap_explainer(model, model.features[7])
-    #explainer.explain_image("../data/Trousse.jpg")
-    #print("time:", explainer.last_explanation_time, "s")
-
-    explainer.benchmark_imagenet50(2);
+    explainer.explain_image("../data/Trousse.jpg")
+    print("time:", explainer.last_explanation_time, "s")
