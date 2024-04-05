@@ -4,6 +4,7 @@ from . import views
 # Specify paths : 
 # > Connect a specific path to a view
 urlpatterns = [
-    path("",views.home, name="home")
+    path("experiments/",views.experiments, name="experiments"),
+    # path("",views.home, name="home"),
 ]
 
