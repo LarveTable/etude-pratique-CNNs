@@ -1,19 +1,25 @@
 <!-- This Home Page will serve as a welcome page describing the project and the websites pages-->
 {% extends "base.html"%} {%block title %} Home Page {% endblock %}
-{%block header %} Home Page {% endblock %}
 {%block content %}
-    <p> Welcome to the home page</p>
-    <p> This is an experimentation plateform created by four student</p>
-    <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" class="scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-        <h4 id="scrollspyHeading1">Description</h4>
-        <p>Blabla</p>
-        <h4 id="scrollspyHeading2">Second heading</h4>
-        <p></p>
-        <h4 id="scrollspyHeading3">Third heading</h4>
-        <p>...</p>
-        <h4 id="scrollspyHeading4">Fourth heading</h4>
-        <p>...</p>
-        <h4 id="scrollspyHeading5">Fifth heading</h4>
-        <p>...</p>
+<div class="container">
+
+<div class="px-6 py-5 my-5 text-center">
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cpu" viewBox="0 0 16 16">
+    <path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0m-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>
+  </svg>
+    <h1 class="display-5 fw-bold text-body-emphasis">XAI Comparison</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">Welcome to the experimentation plateform. Click Get Started to start running experiments of CNN Machine Learning Models using a selection of explanation methods</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="/experiments">
+        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Get Started</button>
+        </a>
+        <a href="/documentation">
+        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Learn More</button>
+        </a>
       </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
