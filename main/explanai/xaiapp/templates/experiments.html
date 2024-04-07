@@ -1,9 +1,7 @@
 <!-- This Home Page will serve as a welcome page describing the project and the websites pages-->
 {% extends "base.html"%} {%block title %} Experiments {% endblock %}
-{%block header %} XAI Experiments {% endblock %}
 {%block content %}
-    
-    <!--
+<!--
       TODO : 
       - add tooltip help for each input 
       - link to doc 
@@ -11,40 +9,97 @@
       - load demo (pre downloaded data)
       - get data to views
      -->
-    <p> Start an experiment with a model and an </p>
-    <div class="input-group mb-3">
-      <span class="input-group-text" id="basic-addon1">@</span>
-      <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-    </div>
-    
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-      <span class="input-group-text" id="basic-addon2">@example.com</span>
-    </div>
-    
-    <div class="mb-3">
-      <label for="basic-url" class="form-label">Your vanity URL</label>
-      <div class="input-group">
-        <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
-      </div>
-      <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
-    </div>
-    
-    <div class="input-group mb-3">
-      <span class="input-group-text">$</span>
-      <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-      <span class="input-group-text">.00</span>
-    </div>
-    
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Username" aria-label="Username">
-      <span class="input-group-text">@</span>
-      <input type="text" class="form-control" placeholder="Server" aria-label="Server">
-    </div>
-    
-    <div class="input-group">
-      <span class="input-group-text">With textarea</span>
-      <textarea class="form-control" aria-label="With textarea"></textarea>
-    </div>
+
+<div class="container">
+  <h1>Experimenting XAI</h1>
+  <p> This experimentation plateform allows you to test and analyse different explanation algorithm for different
+    models. You can get insights on an explanation such as the time, the surface of explanation and more</p>
+
+  <div class="p-2 container border rounded">
+    <form class="needs-validation" action="/experiments/" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h4>Explanation Experiment</h4>
+      <div class="row g-3">
+        <!-- Model Selection -->
+        <div class="col-sm-4">
+          <label for="modelName" class="form-label">Model</label>
+          <select name="modelName" id="modelName" class="form-select" aria-label="Select Model">
+            <option value="VGG19"> VGG19</option>
+            <option value="VGG16" disabled> VGG16</option>
+            <option value="ResNet50" disabled> ResNet50</option>
+          </select>
+          <div class="form-text" id="basic-addon4">Only VGG19 is supported</div>
+        </div>
+
+        <!-- Image Import: multiple images : png, jpg, jpeg are accepted -->
+        <div class="col-sm-7">
+          <label for="images" class="form-label">Images</label>
+          <input class="form-control" type="file" name="images" id="images" accept="image/png, image/jpg, image/jpeg"
+            multiple>
+        </div>
+
+        <!-- Methods Selection-->
+
+        <div class="col-sm-12">
+          <label class="form-label">Methods</label>
+          <div class="list-group ">
+            <div class="d-grid">
+              <label class="list-group-item d-inline">
+                <input class="form-check-input" type="checkbox" name="shapSelected">
+                <span>
+                  SHAP
+                  <small class="d-block text-body-secondary">Shapley Values</small>
+                </span>
+              </label>
+
+              <label class="list-group-item d-inline">
+                <input class="form-check-input" type="checkbox" name="gradCamSelected">
+                <span>
+                  GradCam
+                  <small class="d-block text-body-secondary">Grad Cam</small>
+                </span>
+              </label>
+            <label class="list-group-item d-inline">
+              <input class="form-check-input" type="checkbox" name="igSelected">
+              <span>
+                Integrated Gradient
+                <small class="d-block text-body-secondary">Integradient Gradient </small>
+              </span>
+            </label>
+            <label class="list-group-item d-inline">
+              <input class="form-check-input" type="checkbox" name="limeSelected">
+              <span>
+                LIME 
+                <small class="d-block text-body-secondary">Lime</small>
+              </span>
+            </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <button
+            type="button"
+            name="saveConfig"
+            id="saveConfig"
+            class="btn btn-primary"
+          >
+            save config / load config
+          </button>
+        </div>
+        <div class="col-lg-6">
+          <button
+            type="submit"
+            name="startBtn"
+            id="startBtn"
+            class="btn btn-primary"
+          >
+            Start
+          </button>
+        </div>
+    </form>
+
+  </div>
+</div>
+</div>
 {% endblock %}
