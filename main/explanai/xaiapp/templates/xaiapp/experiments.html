@@ -1,5 +1,5 @@
 <!-- This Home Page will serve as a welcome page describing the project and the websites pages-->
-{% extends "base.html"%} {%block title %} Experiments {% endblock %}
+{% extends "xaiapp/base.html"%} {%block title %} Experiments {% endblock %}
 {%block content %}
 <!--
       TODO : 
@@ -45,7 +45,7 @@
           <div class="list-group ">
             <div class="d-grid">
               <label class="list-group-item d-inline">
-                <input class="form-check-input" type="checkbox" name="shapSelected">
+                <input class="form-check-input" type="checkbox" value="shap">
                 <span>
                   SHAP
                   <small class="d-block text-body-secondary">Shapley Values</small>
@@ -53,21 +53,21 @@
               </label>
 
               <label class="list-group-item d-inline">
-                <input class="form-check-input" type="checkbox" name="gradCamSelected">
+                <input class="form-check-input" type="checkbox" name="method-selection" value="gradcam">
                 <span>
                   GradCam
                   <small class="d-block text-body-secondary">Grad Cam</small>
                 </span>
               </label>
             <label class="list-group-item d-inline">
-              <input class="form-check-input" type="checkbox" name="igSelected">
+              <input class="form-check-input" type="checkbox" name="method-selection" value="integrad">
               <span>
                 Integrated Gradient
                 <small class="d-block text-body-secondary">Integradient Gradient </small>
               </span>
             </label>
             <label class="list-group-item d-inline">
-              <input class="form-check-input" type="checkbox" name="limeSelected">
+              <input class="form-check-input" type="checkbox" name="method-selection" value="lime">
               <span>
                 LIME 
                 <small class="d-block text-body-secondary">Lime</small>
@@ -83,6 +83,7 @@
             name="saveConfig"
             id="saveConfig"
             class="btn btn-primary"
+            disabled
           >
             save config / load config
           </button>
