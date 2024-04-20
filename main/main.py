@@ -3,6 +3,7 @@ from image_processing import process_dataset
 from gradcam.vgg19_gradcam import gradcam_process
 import cv2
 import os
+from tqdm import tqdm
 
 def run_comparison(xai_methods, neural_networks, dataset_path):
     if (not xai_methods or not neural_networks or not dataset_path):
@@ -23,16 +24,17 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
             print("Error processing the dataset.")
             return
         dataset_process_timer_end = time.time()
-        print(f'Dataset processed in {(dataset_process_timer_end-dataset_process_timer_start)*1000:.3}ms')
+        print(f'Dataset processed in {(dataset_process_timer_end-dataset_process_timer_start):.3}s\n')
 
         # enumerate through the images and apply xai methods
-        for file_name in files:
-            print('Processing : '+file_name)
+        fbar = tqdm(files)
+        for file_name in fbar:
+            fbar.set_description("Processing %s" % file_name)
+            #print('Processing : '+file_name)
             img, _ = next(iterateur)
-
             for method in xai_methods:
                 for nn in neural_networks:
-                    print(f'Processing {method} with {nn}')
+                    #print(f'Processing {method} with {nn}')
                     # each method should be a function that takes an image, a file name and NNs as parameters
                     # return must be a processed image, {a prediction?} and a time elapsed and maybe more
 
@@ -45,10 +47,10 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
 
                     match method:
                         case 'gradcam':
-                            output_image, preds, time_elapsed = gradcam_process(img, file_name, nn)
+                            output_image, preds, time_elapsed, mask, inversed_image = gradcam_process(img, file_name, nn)
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             write_to_file(preds_directory, file_name_without_extension+'.txt', preds)
-                            write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(time_elapsed))
+                            write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                         case 'lime':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
@@ -64,7 +66,7 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
                             pass
 
         global_timer_end = time.time()
-        print(f'Work done in {(global_timer_end-global_timer_start)*1000:.3}ms')
+        print(f'Work done in {(global_timer_end-global_timer_start):.3}s')
 
 def directories_check(directories):
     for directory in directories:

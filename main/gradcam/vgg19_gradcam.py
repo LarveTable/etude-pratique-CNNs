@@ -6,6 +6,8 @@ from torchvision.models import VGG19_Weights
 import numpy as np
 import time
 import os
+#temp
+import matplotlib.pyplot as plt
 
 def gradcam_process(image_to_process, file_name, neural_network) :
 
@@ -81,6 +83,8 @@ def gradcam_process(image_to_process, file_name, neural_network) :
 
     start = time.time()
 
+    # maybe loop gradcam part for time elapsed
+
     # get the gradient of the output with respect to the parameters of the model
     pred[:, 386].backward()
 
@@ -110,14 +114,19 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     # interpolate
     img = cv2.imread('main/data/images/'+file_name)
     
-    # superimpose the heatmap on the image
+    # compute the heatmap
     heatmap = np.asarray(heatmap)
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
     heatmap = np.uint8(255 * heatmap)
+    heatmap_bw = heatmap
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
+    end = time.time()
+    elapsed = end-start
+
     # pixelate the heatmap
-    test = heatmap*0.4 #explanations here : https://medium.com/@Coursesteach/computer-vision-part-13-multiply-by-a-scaler-60627d66c820
+    mask = heatmap*0.4 #explanations here : https://medium.com/@Coursesteach/computer-vision-part-13-multiply-by-a-scaler-60627d66c820
+    mask_bw = heatmap_bw*0.4
 
     # count how many pixels have each color present in the image
     # unique_colors, counts = np.unique(test.reshape(-1, 3), axis=0, return_counts=True)
@@ -129,25 +138,33 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     # max_count = color_counts[max_color]
 
     # count non affected pixels
-    non_affected = 0
-    for i in range(test.shape[0]):
-        for j in range(test.shape[1]):
-            if (test[i][j][0] == 51.2 and test[i][j][1] == 0 and test[i][j][2] == 0):
+    """non_affected = 0
+    for i in range(mask.shape[0]):
+        for j in range(mask.shape[1]):
+            if (mask[i][j][0] == 51.2 and mask[i][j][1] == 0 and mask[i][j][2] == 0):
                 non_affected += 1
-                test[i][j][0] = 0
-                test[i][j][1] = 0
-                test[i][j][2] = 0
+                mask[i][j][0] = 0
+                mask[i][j][1] = 0
+                mask[i][j][2] = 0"""
 
     # get the ratio of non affected pixels
-    ratio = non_affected/(test.shape[0]*test.shape[1])
-    print(f'Ratio of non affected pixels : {ratio:.3}')
+    # ratio = non_affected/(mask.shape[0]*mask.shape[1])
+    #print(f'Ratio of non affected pixels : {ratio:.3}')
 
     #cv2.imshow('test', test)
     #cv2.waitKey(0)
 
     superimposed_img = heatmap * 0.4 + img
+    
+    filtered_img = np.zeros_like(img)
+    for i in range(mask_bw.shape[0]):
+        for j in range(mask_bw.shape[1]):
+            if not np.all(mask_bw[i][j] == [0, 0, 0]):
+                filtered_img[i][j] = img[i][j]
 
-    end = time.time()
-    elapsed = end-start
+    #temp
+    """plt.axis('off')
+    plt.imshow(filtered_img)
+    plt.show()"""
 
-    return superimposed_img, pred_res, elapsed
+    return superimposed_img, pred_res, elapsed, mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
