@@ -107,7 +107,7 @@ class LimeVGG19:
         start_explanation_time = time.time()
         # explanation = self.explainer.explain_instance(np.array(self.pill_transf(img)), 
         # remplacer self.pillblabla par juste img_T
-        explanation = self.explainer.explain_instance(np.array(img_t),
+        explanation = self.explainer.explain_instance(np.array(self.pill_transf(img)),
                                                       self.batch_predict,
                                                       top_labels=5,
                                                       hide_color=0,
@@ -172,6 +172,8 @@ class LimeVGG19:
         test_pred = self.batch_predict([pill_transf(img)])
         return test_pred.squeeze().argmax()
     
+
+# PARTIE IMPORTANTE 
     # fonction qui appelle les autres fonctions essentielles :
     def lime_process_all(self, img, file_name, nn):
     
@@ -181,8 +183,8 @@ class LimeVGG19:
 
 
 # NEW MAIN !!!!!!!!!!!!!!!!!! : 
-# lime_vgg = LimeVGG19()
-# lime_vgg.lime_process_all('./Images/Trousse.jpg', 'test.txt', nn)
+lime_vgg = LimeVGG19()
+lime_vgg.lime_process_all('./Images/Trousse.jpg', 'test.txt', nn)
 
 
 
