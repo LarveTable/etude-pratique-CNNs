@@ -105,7 +105,9 @@ class LimeVGG19:
 
         # DEBUT TIMER : DUREE DE L'EXPLICATON 
         start_explanation_time = time.time()
-        explanation = self.explainer.explain_instance(np.array(self.pill_transf(img)),
+        # explanation = self.explainer.explain_instance(np.array(self.pill_transf(img)), 
+        # remplacer self.pillblabla par juste img_T
+        explanation = self.explainer.explain_instance(np.array(img_t),
                                                       self.batch_predict,
                                                       top_labels=5,
                                                       hide_color=0,
@@ -136,17 +138,18 @@ class LimeVGG19:
                                                     num_features=10,
                                                     hide_rest=False)
         img_boundry2 = mark_boundaries(temp / 255.0, mask)
-
+        # FIN DU TIMER 
+        end_timer = time.time()
+        # CALCUL DU TEMPS TOTAL 
+        visualization_time = end_timer - start_timer
+        
+        print("Temps pris pour la visualisation : {:.2f} secondes".format(visualization_time))
         plt.subplot(1, 2, 1)
         plt.imshow(img_boundry1)
         plt.subplot(1, 2, 2)
         plt.imshow(img_boundry2)
         plt.show()
-        # FIN DU TIMER 
-        end_timer = time.time()
-        # CALCUL DU TEMPS TOTAL 
-        visualization_time = end_timer - start_timer
-        print("Temps pris pour l'explication : {:.2f} secondes".format(visualization_time))
+        
         
 
 
@@ -165,20 +168,32 @@ class LimeVGG19:
 
     def test_prediction(self, img):
         pill_transf = self.get_pil_transform()
-        preprocess_transform = self.get_preprocess_transform()
+        # preprocess_transform = self.get_preprocess_transform()
         test_pred = self.batch_predict([pill_transf(img)])
         return test_pred.squeeze().argmax()
+    
+    # fonction qui appelle les autres fonctions essentielles :
+    def lime_process_all(self, img, file_name, nn):
+    
+        image = lime_vgg.get_image(img)
+        explanation = lime_vgg.explain_image(img)
+        lime_vgg.visualize_explanation(explanation, img)
+
+
+# NEW MAIN !!!!!!!!!!!!!!!!!! : 
+# lime_vgg = LimeVGG19()
+# lime_vgg.lime_process_all('./Images/Trousse.jpg', 'test.txt', nn)
 
 
 
-
-lime_vgg = LimeVGG19()
-img = lime_vgg.get_image('./Trousse.jpg')
+# OLD MAIN :
+#lime_vgg = LimeVGG19()
+#img = lime_vgg.get_image('./Trousse.jpg')
 # Obtenir les prédictions top-5
-predictions_top5 = lime_vgg.predict(img)
+#predictions_top5 = lime_vgg.predict(img)
 # Obtenir la classe prédite
-predicted_class = lime_vgg.test_prediction(img)
+# predicted_class = lime_vgg.test_prediction(img)
 # on demande d'expliquer la prédiciton de l'image dont le path est passé en paramètre : 
-explanation = lime_vgg.explain_image('./Trousse.jpg')
+#explanation = lime_vgg.explain_image('./Trousse.jpg')
 # on demande de visualiser l'explication de la prédiction via Lime 
-lime_vgg.visualize_explanation(explanation, './Trousse.jpg')
+#lime_vgg.visualize_explanation(explanation, './Trousse.jpg')

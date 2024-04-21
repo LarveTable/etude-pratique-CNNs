@@ -54,7 +54,14 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
                         case 'lime':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
-                            pass
+                            lime_vgg = LimeVGG19()
+                            img = lime_vgg.get_image('./Trousse.jpg')
+                            # Obtenir les prédictions top-5
+                            predictions_top5 = lime_vgg.predict(img)
+                            # on demande d'expliquer la prédiciton de l'image dont le path est passé en paramètre : 
+                            explanation = lime_vgg.explain_image('./Trousse.jpg')
+                            # on demande de visualiser l'explication de la prédiction via Lime 
+                            lime_vgg.visualize_explanation(explanation, './Trousse.jpg')
                         case 'shap':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
