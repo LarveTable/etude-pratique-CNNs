@@ -151,10 +151,12 @@ def lime_process(img, file_name, nn):
             plt.imshow(img_boundry1)
             plt.show()"""
 
+
             #To resize
             img_raw = cv2.imread('main/data/images/'+img_name)
 
             resized = cv2.resize(img_boundry2, (img_raw.shape[1], img_raw.shape[0]))
+            resized_mask = cv2.resize(mask, (img_raw.shape[1], img_raw.shape[0]), interpolation=cv2.INTER_NEAREST)
 
             #Color
             colored = np.uint8(255 * resized)
@@ -162,7 +164,13 @@ def lime_process(img, file_name, nn):
             #Change color space (fucking thanks to GPT !!!)
             image_rgb = cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
 
-            return image_rgb
+            filtered = np.zeros_like(img_raw)
+            for i in range(resized_mask.shape[0]):
+                for j in range(resized_mask.shape[1]):
+                    if not np.all(resized_mask[i][j] == [0, 0, 0]):
+                        filtered[i][j] = img_raw[i][j]
+
+            return image_rgb, resized_mask, filtered
 
     # MÉTHODES PLUTOT LIÉES AU CLASSIFIEUR QU'À LIME DIRECTEMENT 
         def new_predict_fn(self, images):
@@ -220,6 +228,6 @@ def lime_process(img, file_name, nn):
     # on demande d'expliquer la prédiciton de l'image dont le path est passé en paramètre : 
     explanation, explanation_time = lime_vgg.explain_image(file_name)
     # on demande de visualiser l'explication de la prédiction via Lime 
-    output = lime_vgg.visualize_explanation(explanation, file_name)
+    output, mask, filtered_image = lime_vgg.visualize_explanation(explanation, file_name)
 
-    return output, predictions_top5, explanation_time
+    return output, predictions_top5, explanation_time, mask, filtered_image

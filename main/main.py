@@ -49,13 +49,17 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
 
                     match method:
                         case 'gradcam':
-                            output_image, preds, time_elapsed = gradcam_process(img, file_name, nn)
+                            output_image, preds, time_elapsed, mask, filtered_image = gradcam_process(img, file_name, nn) #mask to intersect and filtered to re inject
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
+                            cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
+                            cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(preds_directory, file_name_without_extension+'.txt', preds)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                         case 'lime':
-                            output_image, preds, time_elapsed = lime_process(img, file_name, nn)
-                            cv2.imwrite(image_directory+'/'+file_name, output_image) 
+                            output_image, preds, time_elapsed, mask, filtered_image = lime_process(img, file_name, nn)
+                            cv2.imwrite(image_directory+'/'+file_name, output_image)
+                            cv2.imwrite(image_directory+'/'+"mask"+file_name, 255*mask)
+                            cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(preds_directory, file_name_without_extension+'.txt', preds)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                         case 'shap':

@@ -126,7 +126,7 @@ def gradcam_process(image_to_process, file_name, neural_network) :
 
     # pixelate the heatmap
     mask = heatmap*0.4 #explanations here : https://medium.com/@Coursesteach/computer-vision-part-13-multiply-by-a-scaler-60627d66c820
-    mask_bw = heatmap_bw*0.4
+    mask_bw = heatmap_bw
 
     # count how many pixels have each color present in the image
     # unique_colors, counts = np.unique(test.reshape(-1, 3), axis=0, return_counts=True)
@@ -156,15 +156,17 @@ def gradcam_process(image_to_process, file_name, neural_network) :
 
     superimposed_img = heatmap * 0.4 + img
     
+    final_mask = np.zeros_like(img)
     filtered_img = np.zeros_like(img)
     for i in range(mask_bw.shape[0]):
         for j in range(mask_bw.shape[1]):
             if not np.all(mask_bw[i][j] == [0, 0, 0]):
                 filtered_img[i][j] = img[i][j]
+                final_mask[i][j] = [255, 255, 255]
 
     #temp
     """plt.axis('off')
     plt.imshow(filtered_img)
     plt.show()"""
 
-    return superimposed_img, pred_res, elapsed #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
+    return superimposed_img, pred_res, elapsed, final_mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
