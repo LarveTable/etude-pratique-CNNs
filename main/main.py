@@ -4,6 +4,8 @@ from gradcam.vgg19_gradcam import gradcam_process
 import cv2
 import os
 from tqdm import tqdm
+from LIME.VGG19_LIME import lime_process
+import matplotlib.pyplot as plt
 
 def run_comparison(xai_methods, neural_networks, dataset_path):
     if (not xai_methods or not neural_networks or not dataset_path):
@@ -47,21 +49,15 @@ def run_comparison(xai_methods, neural_networks, dataset_path):
 
                     match method:
                         case 'gradcam':
-                            output_image, preds, time_elapsed, mask, inversed_image = gradcam_process(img, file_name, nn)
+                            output_image, preds, time_elapsed = gradcam_process(img, file_name, nn)
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             write_to_file(preds_directory, file_name_without_extension+'.txt', preds)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                         case 'lime':
-                            #todo
+                            output_image, preds, time_elapsed = lime_process(img, file_name, nn)
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
-                            lime_vgg = LimeVGG19()
-                            img = lime_vgg.get_image('./Trousse.jpg')
-                            # Obtenir les prédictions top-5
-                            predictions_top5 = lime_vgg.predict(img)
-                            # on demande d'expliquer la prédiciton de l'image dont le path est passé en paramètre : 
-                            explanation = lime_vgg.explain_image('./Trousse.jpg')
-                            # on demande de visualiser l'explication de la prédiction via Lime 
-                            lime_vgg.visualize_explanation(explanation, './Trousse.jpg')
+                            write_to_file(preds_directory, file_name_without_extension+'.txt', preds)
+                            write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                         case 'shap':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
@@ -85,4 +81,4 @@ def write_to_file(directory, file_name, content):
         file.write(content)
 
 # for test purposes
-run_comparison(["gradcam"], ["vgg19"], 'main/data')
+run_comparison(["gradcam","lime"], ["vgg19"], 'main/data')

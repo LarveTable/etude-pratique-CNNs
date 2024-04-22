@@ -167,4 +167,4 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     plt.imshow(filtered_img)
     plt.show()"""
 
-    return superimposed_img, pred_res, elapsed, mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
+    return superimposed_img, pred_res, elapsed #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
