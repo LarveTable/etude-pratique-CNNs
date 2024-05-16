@@ -7,6 +7,8 @@ from tqdm import tqdm
 from LIME.VGG19_LIME import lime_process
 import matplotlib.pyplot as plt
 
+#to comment
+
 def run_comparison(xai_methods, neural_networks, dataset_path):
     if (not xai_methods or not neural_networks or not dataset_path):
         print("At least one parameter is missing.")

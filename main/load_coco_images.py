@@ -3,6 +3,8 @@ import skimage.io as io
 from tqdm import tqdm
 import os
 
+#to comment
+
 def download(dataType='val2017', catNms=['cat', 'dog']):
     dataDir='main/cocoapi'
     dataType='val2017'

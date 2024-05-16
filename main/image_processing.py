@@ -3,6 +3,8 @@ from torchvision import datasets
 from torch.utils import data
 import os
 
+#to comment
+
 def process_dataset(path):
 
     # image folder path
