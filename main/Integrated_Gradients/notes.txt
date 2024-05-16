@@ -1,2 +1,0 @@
-python activate myenv
-python main.py --model-type vgg19 --img 08.jpg
