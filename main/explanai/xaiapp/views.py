@@ -2,6 +2,8 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .models import Config, Image, Experiment
+
+# 
 # TODO :
 # - Use pickle to save and get the model easily
 #       -> Pickle allows to serialize a class and compress it efficiently 
@@ -60,5 +62,8 @@ def result(request, experiment_id):
     
     for img in images:
         print(img.image)
-    # return HttpResponse("ok")
-    return render(request, "xaiapp/results.html", {"config_data":config})
+    
+    #explanation
+    # outimage = 
+
+    return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "img":images[0]})

@@ -13,7 +13,7 @@ class Config(models.Model):
 
 class Image(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
-    image = models.ImageField(null=False, blank=False, upload_to="input_images/")
+    image = models.ImageField(null=False, blank=False)
 
 # A config that's been executed containing results with images
 class Experiment(models.Model):

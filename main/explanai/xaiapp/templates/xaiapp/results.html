@@ -1,17 +1,48 @@
-<!-- This Home Page will serve as a welcome page describing the project and the websites pages-->
 {% extends "xaiapp/base.html"%} {%block title %} Results {% endblock %}
 {%block content %}
+
+<!-- TODO 
+- Use the same form as before but disabled
+-->
 
 <div class="container">
   <h1>Results</h1>
   <div class="p-2 container border rounded">
     <h4>Experiment Configuration</h4>
     <p>
-      Model : {{config_data.model_name}}
+      Model: {{config_data.model_name}} <br>
       <!--Methods : {{config_data.methods}}-->
-      <img src={{image}}/>
-
     </p>
+  </div>
 </div>
+
+
+<div class="container mb-7">
+  <div class="row row-cols-auto g-2">
+    {%if in_images%}
+    {% for img in in_images%}
+    <div class="col-auto h-100">
+      <div class="card" style="width: 100px;">
+        <img src="{{img.image.url}}" class="card-img-top"
+         style="width: 100%; height:100px; object-fit:cover;"
+         alt="{{img.image.url}}">
+        <div class="card-body">
+          <h5 class="card-title" style="overflow: scroll;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          width: fit-content;
+          white-space: nowrap;">{{img.image}}</h5>
+          <p class="card-text"><small class="text-muted">9s</small></p>
+        </div>
+      </div>
+    </div>
+    {%endfor%}
+    {%else%}
+    <p>
+      no input images
+    </p>
+    {%endif%}
+  </div>
 </div>
+
 {% endblock %}
