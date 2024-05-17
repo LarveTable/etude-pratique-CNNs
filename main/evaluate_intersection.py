@@ -7,7 +7,7 @@ import cv2
 
 #to comment
 
-def evaluate(id, catNms, gradcam_mask):
+def evaluate(id, catNms, mask):
     dataType='val2017'
     dataDir='main/cocoapi'
     dataType='val2017'

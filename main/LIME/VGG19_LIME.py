@@ -23,12 +23,12 @@ import time
 from lime import lime_image
 from skimage.segmentation import mark_boundaries
 
-def lime_process(img, file_name, nn):
+def lime_process(img, file_name, nn, pred_raw):
 
     class LimeVGG19:
 
         def __init__(self):
-            self.model = models.vgg19(weights = VGG19_Weights.DEFAULT)
+            self.model = nn
             self.idx2label, self.cls2label, self.cls2idx = self.load_class_labels()
             self.pill_transf = self.get_pil_transform()
             self.preprocess_transform = self.get_preprocess_transform()
@@ -75,7 +75,7 @@ def lime_process(img, file_name, nn):
 
 
         def batch_predict(self, images):
-            self.model.eval()
+            #self.model.eval()
             batch = torch.stack(tuple(self.preprocess_transform(i) for i in images), dim=0)
 
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -106,6 +106,9 @@ def lime_process(img, file_name, nn):
         def explain_image(self, img_name):
             img_raw = self.get_image('main/data/images/'+img_name)
 
+            probs = F.softmax(pred_raw, dim=1)
+            to_explain = probs.detach().cpu().numpy()
+
             # DEBUT TIMER : DUREE DE L'EXPLICATON 
             start_explanation_time = time.time()
             # explanation = self.explainer.explain_instance(np.array(self.pill_transf(img)), 
@@ -131,15 +134,15 @@ def lime_process(img, file_name, nn):
 
             temp, mask = explanation.get_image_and_mask(explanation.top_labels[0],
                                                         positive_only=True,
-                                                        num_features=5,
+                                                        num_features=10,
                                                         hide_rest=False)
             img_boundry1 = mark_boundaries(temp / 255.0, mask)
 
-            temp, mask = explanation.get_image_and_mask(explanation.top_labels[0],
+            """temp, mask = explanation.get_image_and_mask(explanation.top_labels[0],
                                                         positive_only=False,
                                                         num_features=10,
                                                         hide_rest=False)
-            img_boundry2 = mark_boundaries(temp / 255.0, mask)
+            img_boundry2 = mark_boundaries(temp / 255.0, mask)"""
             # FIN DU TIMER 
             end_timer = time.time()
             # CALCUL DU TEMPS TOTAL 
@@ -156,7 +159,7 @@ def lime_process(img, file_name, nn):
             #To resize
             img_raw = cv2.imread('main/data/images/'+img_name)
 
-            resized = cv2.resize(img_boundry2, (img_raw.shape[1], img_raw.shape[0]))
+            resized = cv2.resize(img_boundry1, (img_raw.shape[1], img_raw.shape[0]))
             resized_mask = cv2.resize(mask, (img_raw.shape[1], img_raw.shape[0]), interpolation=cv2.INTER_NEAREST)
 
             #Color
@@ -171,7 +174,7 @@ def lime_process(img, file_name, nn):
                     if not np.all(resized_mask[i][j] == [0, 0, 0]):
                         filtered[i][j] = img_raw[i][j]
 
-            return image_rgb, resized_mask, filtered
+            return image_rgb, 255*resized_mask, filtered
 
     # MÉTHODES PLUTOT LIÉES AU CLASSIFIEUR QU'À LIME DIRECTEMENT 
         def new_predict_fn(self, images):
@@ -224,11 +227,9 @@ def lime_process(img, file_name, nn):
 
     #lime process
     lime_vgg = LimeVGG19()
-    # Obtenir les prédictions top-5
-    predictions_top5 = lime_vgg.predict(img, file_name)
     # on demande d'expliquer la prédiciton de l'image dont le path est passé en paramètre : 
     explanation, explanation_time = lime_vgg.explain_image(file_name)
     # on demande de visualiser l'explication de la prédiction via Lime 
     output, mask, filtered_image = lime_vgg.visualize_explanation(explanation, file_name)
 
-    return output, predictions_top5, explanation_time, mask, filtered_image
+    return output, explanation_time, mask, filtered_image

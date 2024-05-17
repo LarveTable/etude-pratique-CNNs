@@ -11,77 +11,7 @@ import matplotlib.pyplot as plt
 
 #to comment
 
-def gradcam_process(image_to_process, file_name, neural_network) :
-
-    # dissect the vgg19 network
-
-    class VGG(nn.Module):
-        def __init__(self):
-            super(VGG, self).__init__()
-        
-            # get the pretrained VGG19 network
-            self.vgg = vgg19(weights=VGG19_Weights.DEFAULT)
-        
-            # disect the network to access its last convolutional layer
-            self.features_conv = self.vgg.features[:36]
-        
-            # get the max pool of the features stem
-            self.max_pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-        
-            # get the classifier of the vgg19
-            self.classifier = self.vgg.classifier
-        
-            # placeholder for the gradients
-            self.gradients = None
-    
-        # hook for the gradients of the activations
-        def activations_hook(self, grad):
-            self.gradients = grad
-        
-        def forward(self, x):
-            x = self.features_conv(x)
-        
-            # register the hook
-            h = x.register_hook(self.activations_hook)
-        
-            # apply the remaining pooling
-            x = self.max_pool(x)
-            x = x.view((1, -1))
-            x = self.classifier(x)
-            return x
-    
-        # method for the gradient extraction
-        def get_activations_gradient(self):
-            return self.gradients
-    
-        # method for the activation exctraction
-        def get_activations(self, x):
-            return self.features_conv(x)
-
-    # initialize the VGG model
-    vgg = VGG()
-
-    # set the evaluation mode
-    vgg.eval()
-
-    # get the most likely prediction of the model
-    pred = vgg(image_to_process)
-
-    # get the top 5 class_ids whith their matched probability
-    pred2 = pred.squeeze(0).softmax(0)
-    top_5_conf, i = pred2.topk(5)
-
-    pred_res = "Prediction for "+file_name+" : \n"
-
-    # for each class_id, add them to the result with its associated score
-    itr = 0
-    for x in i:
-        # ask the included categories to match the class_id with a label
-        category_name = VGG19_Weights.DEFAULT.meta["categories"][x.item()]
-        score = top_5_conf[itr].item()
-        # write the prediction into the pred_res variable
-        pred_res += f"- {category_name} / {100 * score:.1f}%\n"
-        itr=itr+1
+def gradcam_process(image_to_process, file_name, neural_network, pred) :
 
     start = time.time()
 
@@ -91,13 +21,13 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     pred[:, 386].backward()
 
     # pull the gradients out of the model
-    gradients = vgg.get_activations_gradient()
+    gradients = neural_network.get_activations_gradient()
 
     # pool the gradients across the channels
     pooled_gradients = torch.mean(gradients, dim=[0, 2, 3])
 
     # get the activations of the last convolutional layer
-    activations = vgg.get_activations(image_to_process).detach()
+    activations = neural_network.get_activations(image_to_process).detach()
 
     # weight the channels by corresponding gradients
     for i in range(512):
@@ -171,4 +101,4 @@ def gradcam_process(image_to_process, file_name, neural_network) :
     plt.imshow(filtered_img)
     plt.show()"""
 
-    return superimposed_img, pred_res, elapsed, final_mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
+    return superimposed_img, elapsed, final_mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
