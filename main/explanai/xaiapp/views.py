@@ -1,7 +1,12 @@
+import time
+import json
+
 from django.shortcuts import render, get_list_or_404, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
-from .models import Config, Image, Experiment
+from .models import Config, InImage, Experiment
+
+import concurrent.futures
 
 # 
 # TODO :
@@ -37,12 +42,12 @@ def experiments(request):
 
         # save images
         for img in images : 
-            new_image_object = Image.objects.create(config=new_config_object,
+            new_image_object = InImage.objects.create(config=new_config_object,
                                                     image=img)
             new_image_object.save()
 
         # New experiment
-        new_expe_object = Experiment.objects.create(config=new_config_object)
+        new_expe_object = Experiment.objects.create(config=new_config_object, status="pending")
         new_expe_object.save()
 
         # if no error 
@@ -54,16 +59,53 @@ def experiments(request):
 
     return render(request, "xaiapp/experiments.html")
 
-# run in bg and update as the results come 
+# display the result page and start explaining if status != finished
+# start the processing in the background server
 def result(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
-    images = config.image_set.all()
-    
-    for img in images:
-        print(img.image)
-    
-    #explanation
-    # outimage = 
+    images = config.inimage_set.all()
 
-    return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "img":images[0]})
+    if experiment.status != "finished":
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(process_experiment, "processing", experiment_id)
+    
+    return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status})
+
+# process each inimage and put its out image 
+def process_experiment(experiment_id):
+    experiment = get_object_or_404(Experiment, pk=experiment_id)
+    config = experiment.config
+    for iimg in config.inimage_set.all():
+        time.sleep(2) # simulate delay for testing
+        iimg.status = "finished"
+        print("finished : ", str(iimg.image), iimg.status)
+        iimg.save()
+    experiment.status = "finished"
+    experiment.save()
+
+# Update the experiment data : images and its status
+def get_experiment_update(request, experiment_id):
+    experiment = get_object_or_404(Experiment, pk=experiment_id)
+    config=experiment.config
+    print("status = " , experiment.status)
+    def event_stream():
+        while experiment.status == "pending":
+            time.sleep(1)
+            # each image : status and if done out image
+            data = { 
+                "message": "Experiment update",
+                "status":[]
+            }
+            for iimg in config.inimage_set.all():
+                # name, status, outimage
+                iimg_status = {"imgName":str(iimg.image), "status": iimg.status}
+                data["status"].append(iimg_status)
+
+            print(data)
+            json_data = json.dumps(data)
+            yield f"data: {json_data}\n\n"
+
+    response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+    response['Cache-Control'] = 'no-cache'
+    return response
