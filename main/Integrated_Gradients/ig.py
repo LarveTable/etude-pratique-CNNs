@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='integrated-gradients')
 parser.add_argument('--model-type', type=str, default='vgg19', help='the type of network')
 parser.add_argument('--img', type=str, default='01.jpg', help='the images name')
 
-def ig_process(image_to_process, file_name, neural_network, nn):
+def ig_process(image_to_process, file_name, neural_network, nn, parameters=None):
 
     # Read and preprocess the image
     img = cv2.imread('main/data/images/' + file_name)

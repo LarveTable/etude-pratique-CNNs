@@ -23,7 +23,7 @@ import time
 from lime import lime_image
 from skimage.segmentation import mark_boundaries
 
-def lime_process(img, file_name, nn, pred_raw):
+def lime_process(img, file_name, nn, pred_raw, parameters=None):
 
     class LimeVGG19:
 
@@ -106,8 +106,8 @@ def lime_process(img, file_name, nn, pred_raw):
         def explain_image(self, img_name):
             img_raw = self.get_image('main/data/images/'+img_name)
 
-            probs = F.softmax(pred_raw, dim=1)
-            to_explain = probs.detach().cpu().numpy()
+            #probs = F.softmax(pred_raw, dim=1)
+            #to_explain = probs.detach().cpu().numpy()
 
             # DEBUT TIMER : DUREE DE L'EXPLICATON 
             start_explanation_time = time.time()

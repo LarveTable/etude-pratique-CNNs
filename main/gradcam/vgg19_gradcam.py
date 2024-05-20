@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 #to comment
 
-def gradcam_process(image_to_process, file_name, neural_network, pred) :
+def gradcam_process(image_to_process, file_name, neural_network, pred, parameters=None) :
 
     start = time.time()
 

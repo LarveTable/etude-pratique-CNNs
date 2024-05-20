@@ -10,10 +10,12 @@ from Integrated_Gradients.ig import ig_process
 from vgg19 import init_model_vgg19
 from evaluate_intersection import evaluate
 import re
+from explanation import Explanation
+import random
 
 #to comment
 
-def run_comparison(xai_methods, neural_networks, dataset_path=None, use_coco=False, coco_categories=None
+def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, use_coco=False, coco_categories=None
                    , number_of_images=None, randomized=None):
     if (not xai_methods or not neural_networks or not dataset_path or not use_coco):
         print("At least one parameter is missing.")
@@ -53,6 +55,11 @@ def run_comparison(xai_methods, neural_networks, dataset_path=None, use_coco=Fal
             
             for nn in neural_networks:
 
+                rand_int = random.randint(0, 100)
+                time_now = time.time()
+                
+                explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
+
                 # instantiate the neural network and return the model and the predictions
                 match nn:
                     case 'vgg19':
@@ -72,53 +79,50 @@ def run_comparison(xai_methods, neural_networks, dataset_path=None, use_coco=Fal
 
                     match method:
                         case 'gradcam':
-                            if nn == 'vgg19':
-                                selected_nn = selected_nn_gradcam
-                                pred_raw = pred_raw_gradcam
-                            output_image, time_elapsed, mask, filtered_image = gradcam_process(img, file_name, selected_nn, pred_raw) #mask to intersect and filtered to re inject
+                            output_image, time_elapsed, mask, filtered_image = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, parameters['gradcam']) #mask to intersect and filtered to re inject
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                             result_intersect = evaluate(int(id[0]), coco_categories, mask)
                             processed_filter = process_one(filtered_image)
-                            _, _, second_pass, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
-                            print(pred_top1)
-                            print(second_pass)
+                            _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
+                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
                         case 'lime':
-                            output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw)
+                            output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw, parameters['lime'])
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                             result_intersect = evaluate(int(id[0]), coco_categories, mask)
                             processed_filter = process_one(filtered_image)
-                            _, _, second_pass, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
-                            print(pred_top1)
-                            print(second_pass)
+                            _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
+                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
                         case 'shap':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
                             pass
                         case 'integrated_gradients':
                             #todo
-                            output_image, time_elapsed, mask, filtered_image = ig_process(img, file_name, selected_nn, nn)
+                            output_image, time_elapsed, mask, filtered_image = ig_process(img, file_name, selected_nn, nn, parameters['integrated_gradients'])
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
                             result_intersect = evaluate(int(id[0]), coco_categories, mask)
                             processed_filter = process_one(filtered_image)
-                            _, _, second_pass, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
-                            print(pred_top1)
-                            print(second_pass)
-                            pass
+                            _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
+                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
                         case _:
                             print("Error : method not found.")
                             return
 
         global_timer_end = time.time()
         print(f'Work done in {(global_timer_end-global_timer_start):.3}s')
+        return explanation
 
 def directories_check(directories):
     for directory in directories:
@@ -130,4 +134,15 @@ def write_to_file(directory, file_name, content):
         file.write(content)
 
 # for test purposes
-run_comparison(["gradcam"], ["vgg19"], 'main/data', True, ['dog'])
+parameters = {
+    "gradcam": {
+    },
+    "lime": {
+    },
+    "integrated_gradients": {
+    }
+}
+exp = run_comparison(["gradcam", "lime", "integrated_gradients"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+
+print(exp.results['gradcam'][90003]['result_intersect'])
+print(exp.results['lime'][90003]['result_intersect'])
