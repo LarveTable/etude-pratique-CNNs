@@ -36,29 +36,29 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
             return
         dataset_process_timer_end = time.time()
         print(f'Dataset processed in {(dataset_process_timer_end-dataset_process_timer_start):.3}s\n')
+        
+        for nn in neural_networks:
 
-        # enumerate through the images and apply xai methods
-        fbar = tqdm(files)
-        for file_name in fbar:
-            fbar.set_description("Processing %s" % file_name)
-            #print('Processing : '+file_name)
-            img, _ = next(iterateur)
+            rand_int = random.randint(0, 100)
+            time_now = time.time()
+                    
+            explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
 
-            # get the file name without the extension
-            file_name_without_extension = os.path.splitext(file_name)[0]
+            # enumerate through the images and apply xai methods
+            fbar = tqdm(files)
+            for file_name in fbar:
+                fbar.set_description("Processing %s" % file_name)
+                #print('Processing : '+file_name)
+                img, _ = next(iterateur)
 
-            # create a regex pattern for the id
-            id_pattern = r"^(\d*)"
+                # get the file name without the extension
+                file_name_without_extension = os.path.splitext(file_name)[0]
 
-            # apply the regex pattern to the file name without extension
-            id = re.findall(id_pattern, file_name_without_extension) #id[0] contains the id
-            
-            for nn in neural_networks:
+                # create a regex pattern for the id
+                id_pattern = r"^(\d*)"
 
-                rand_int = random.randint(0, 100)
-                time_now = time.time()
-                
-                explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
+                # apply the regex pattern to the file name without extension
+                id = re.findall(id_pattern, file_name_without_extension) #id[0] contains the id
 
                 # instantiate the neural network and return the model and the predictions
                 match nn:
@@ -142,7 +142,10 @@ parameters = {
     "integrated_gradients": {
     }
 }
-exp = run_comparison(["gradcam", "lime", "integrated_gradients"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
 
-print(exp.results['gradcam'][90003]['result_intersect'])
-print(exp.results['lime'][90003]['result_intersect'])
+print(exp.results['gradcam'])
+#filter = exp.results['gradcam'][161609]['filtered_image']
+#cv2.imshow('filtered', filter)
+#cv2.waitKey(0)
+#print(exp.results['lime'][90003]['result_intersect'])
