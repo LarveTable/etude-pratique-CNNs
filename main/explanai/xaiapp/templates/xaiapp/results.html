@@ -47,10 +47,9 @@
 
 <script>
   // SSE
-  if("{{experiment_status}}" == "pending"){
     const eventSource = new EventSource("/experiment_update/" + "{{experiment_id}}/");
 
-    console.log("ready for updates on Expe:" + "{{experiment_id}}");
+    console.log("ready for updates on Expe:" + "{{experiment_id}}" + "{{experiment_status}}");
     // When a message is received 
     eventSource.onmessage = function(e){
       const data = JSON.parse(e.data);
@@ -67,12 +66,17 @@
         const imgStatus = imgS.status; 
         console.log(imgStatus);
         switch(imgStatus){
-          case "success":
+          case "finished":
            updateClass(imgS.imgName,"border-warning", "border-success");
            break;
         }
       });
+      // If the experiment is done : close the updates
+      if("{{experiment_status}}" == "finished"){
+        eventSource.close();
+      }
     };
+
 
     eventSource.onerror = function(e){
       console.error('EventSource failed:', e);
@@ -84,7 +88,6 @@
       e.classList.remove(oldClass);
       e.classList.add(newClass);
     }
-  }
 
 </script>
 

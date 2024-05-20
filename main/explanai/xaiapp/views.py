@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
 from .models import Config, InImage, Experiment
 
-import concurrent.futures
+import threading
 
 # 
 # TODO :
@@ -24,7 +24,7 @@ import concurrent.futures
 # - use django forms
 # - transform images to 224x224 before saving
 
-# Create your views here.
+# Homepage serving
 def home(request):
     return render(request, "xaiapp/home.html")
 
@@ -50,10 +50,6 @@ def experiments(request):
         new_expe_object = Experiment.objects.create(config=new_config_object, status="pending")
         new_expe_object.save()
 
-        # if no error 
-        context={}
-        context['config_data'] = "hi"
-
         # Redirect to result/expeID
         return HttpResponseRedirect(reverse("result", args=(new_expe_object.id,)))
 
@@ -66,20 +62,22 @@ def result(request, experiment_id):
     config = experiment.config
     images = config.inimage_set.all()
 
+    # if the experiment isn't done then execute its processing in background
     if experiment.status != "finished":
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(process_experiment, "processing", experiment_id)
+        thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
+        thread1.start()
     
     return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status})
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
+    print("processing")
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
     for iimg in config.inimage_set.all():
         time.sleep(2) # simulate delay for testing
         iimg.status = "finished"
-        print("finished : ", str(iimg.image), iimg.status)
+        print("finished : ", str(iimg.image))
         iimg.save()
     experiment.status = "finished"
     experiment.save()
@@ -90,7 +88,7 @@ def get_experiment_update(request, experiment_id):
     config=experiment.config
     print("status = " , experiment.status)
     def event_stream():
-        while experiment.status == "pending":
+        while 1:
             time.sleep(1)
             # each image : status and if done out image
             data = { 
