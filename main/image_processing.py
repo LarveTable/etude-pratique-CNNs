@@ -1,3 +1,5 @@
+from skimage import io
+from PIL import Image
 from torchvision import transforms
 from torchvision import datasets
 from torch.utils import data
@@ -37,3 +39,17 @@ def process_dataset(path):
     else:
         print("No images to process, please add them in the data/images folder.")
         return None, None
+    
+def process_one(img):
+
+    # the transformation to apply to every image in the dataset
+    transform = transforms.Compose([transforms.Resize((224, 224)), 
+                                    transforms.ToTensor(),
+                                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+    
+    image = Image.fromarray(img)
+    image = transform(image)
+
+    image = image.unsqueeze(0)
+
+    return image

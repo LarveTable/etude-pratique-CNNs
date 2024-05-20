@@ -44,13 +44,17 @@ def ig_process(image_to_process, file_name, neural_network, nn):
 
     resized_mask = cv2.resize(mask, (to_resize.shape[1], to_resize.shape[0]), interpolation=cv2.INTER_NEAREST)
 
+    img_integrated_gradient = np.uint8(img_integrated_gradient)
+
+    resized_ig = cv2.resize(img_integrated_gradient, (to_resize.shape[1], to_resize.shape[0]))
+
     filtered = np.zeros_like(to_resize)
     for i in range(resized_mask.shape[0]):
         for j in range(resized_mask.shape[1]):
             if not np.all(resized_mask[i][j] < 0.1):
                 filtered[i][j] = to_resize[i][j]
 
-    return np.uint8(img_integrated_gradient), explanation_time, resized_mask*255, filtered
+    return resized_ig, explanation_time, resized_mask*255, filtered
 
 #utils
 

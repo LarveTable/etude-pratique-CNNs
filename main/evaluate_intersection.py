@@ -4,6 +4,7 @@ from tqdm import tqdm
 import os
 import matplotlib.pyplot as plt
 import cv2
+import numpy as np
 
 #to comment
 
@@ -21,14 +22,30 @@ def evaluate(id, catNms, mask):
     anns = coco.loadAnns(annIds) # on recup l'annotation de l'image
     #print(anns) # interessant, on a les categories id pour savoir si c'est personne ou bus
 
-    temp_list = [] # temp liste because showanns waits a list and i want to show only one annotation
-    temp_list.append(anns[0]) # we add the first annotation to the list
+    result_dict = {}
 
-    mask = coco.annToMask(temp_list[0]) # numpy 2D array of the mask
+    for ann in anns:
+        coco_mask = coco.annToMask(ann) # numpy 2D array of the mask
 
-    # iterate over the gradcam mask and the coco mask to get the intersection
+        # iterate over the method mask and the coco mask to get the intersection
+        intersection = 0
+        for i in range(mask.shape[0]):
+            for j in range(mask.shape[1]):
+                if np.all(coco_mask[i][j]) == 1 and np.all(mask[i][j]) != 0:
+                    intersection += 1
+                
+        coco_pixels = np.ceil(ann['area'])
 
-    plt.imshow(mask)
-    plt.show()
+        # ratio compared to coco mask
+        percentage = (intersection / coco_pixels)*100
+        
+        result_dict[str(ann['category_id'])+'-'+str(ann['id'])] = percentage
 
-evaluate(71226, ['dog', 'cat'], None)
+        """plt.imshow(coco_mask)
+        plt.show()
+        plt.imshow(mask)
+        plt.show()"""
+    
+    return result_dict
+
+#evaluate(329447, ['dog'], None) #test

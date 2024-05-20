@@ -2,10 +2,11 @@ from cocoapi.PythonAPI.pycocotools.coco import COCO
 import skimage.io as io
 from tqdm import tqdm
 import os
+import random
 
 #to comment
 
-def download(dataType='val2017', catNms=['cat', 'dog']):
+def download(dataType='val2017', catNms=['dog'], number_of_images=5, randomized=True):
     dataDir='main/cocoapi'
     dataType='val2017'
     annFile='{}/annotations/instances_{}.json'.format(dataDir,dataType) # annotations
@@ -23,10 +24,17 @@ def download(dataType='val2017', catNms=['cat', 'dog']):
         return None
     else:
         print("\nDownloading images...")
-        for i in tqdm(range(len(imgIds))):
-            img = coco.loadImgs(imgIds[i])[0]
-            I = io.imread(img['coco_url'])
-            io.imsave('main/data/images/'+str(img['id'])+'.jpg', I)
+        if not randomized:
+            for i in tqdm(range(number_of_images)):
+                img = coco.loadImgs(imgIds[i])[0]
+                I = io.imread(img['coco_url'])
+                io.imsave('main/data/images/'+str(img['id'])+'-'+str(catIds)+'.jpg', I)
+        else:
+            for i in tqdm(range(number_of_images)):
+                i = random.randint(0, len(imgIds)-1)
+                img = coco.loadImgs(imgIds[i])[0]
+                I = io.imread(img['coco_url'])
+                io.imsave('main/data/images/'+str(img['id'])+'-'+str(catIds)+'.jpg', I)
 
 def directories_check(directories):
     for directory in directories:
