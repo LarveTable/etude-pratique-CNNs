@@ -13,6 +13,12 @@ import re
 from explanation import Explanation
 import random
 
+DATA_PATH='data'
+PREDICTION_PATH='results/predictions/'
+RESULTS_PATH='results/results/'
+IMAGES_PATH='results/images/'
+TIMES_PATH='results/times/'
+
 #to comment
 
 def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, use_coco=False, coco_categories=None
@@ -65,7 +71,7 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
                     case 'vgg19':
                         selected_nn, preds_top5, pred_top1, pred_raw = init_model_vgg19(img, file_name, use_gradcam=False)
                         selected_nn_gradcam, _, _, pred_raw_gradcam = init_model_vgg19(img, file_name, use_gradcam=True)
-                        preds_directory = 'main/results/predictions/'+nn+'/'+file_name_without_extension
+                        preds_directory = PREDICTION_PATH+nn+'/'+file_name_without_extension
                         directories_check([preds_directory])
                         write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top1', pred_top1)
                         write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top5', preds_top5)
@@ -73,8 +79,8 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
                 for method in xai_methods:
 
                     # check if the image directory exists, if not create it
-                    image_directory = 'main/results/images/'+method+'/'+method+'_'+file_name_without_extension
-                    time_elapsed_directory = 'main/results/times/'+method+'/'+method+'_'+file_name_without_extension
+                    image_directory = IMAGES_PATH+method+'/'+method+'_'+file_name_without_extension
+                    time_elapsed_directory = TIMES_PATH+method+'/'+method+'_'+file_name_without_extension
                     directories_check([image_directory, time_elapsed_directory])
 
                     match method:
@@ -142,7 +148,7 @@ parameters = {
     "integrated_gradients": {
     }
 }
-exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+exp = run_comparison(["gradcam"], ["vgg19"], parameters, DATA_PATH, True, ['dog'])
 
 print(exp.results['gradcam'])
 #filter = exp.results['gradcam'][161609]['filtered_image']
