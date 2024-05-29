@@ -56,7 +56,7 @@ def experiments(request):
             new_image_object.save()
 
         # New experiment
-        new_expe_object = Experiment.objects.create(config=new_config_object, status="pending")
+        new_expe_object = Experiment.objects.create(config=new_config_object, status="created")
         print(new_config_object.methods)
         new_expe_object.save()
 
@@ -74,8 +74,11 @@ def result(request, experiment_id):
     methods=[m.name for m in list(config.methods.all())]
     images = config.inimage_set.all()
 
-    # if the experiment isn't done then execute its processing in background
-    if experiment.status != "finished":
+    # if the experiment isn't done then execute its processing in background : 
+    # expe is created  then when running then when done its satus is finished
+    if experiment.status != "finished" and experiment.status != "pending":
+        experiment.status="pending"
+        experiment.save()
         thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
         thread1.start()
     
@@ -91,6 +94,12 @@ def experiments_list(request):
 def image_result(request, experiment_id, image_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     in_image=get_object_or_404(InImage, pk=image_id)
+    if in_image.status == "finished":
+        result = in_image.result_set.first()
+        result_data={"explanation_data":{"pred1":result.pred_top1}}
+        result_data["methods_data"] = [{"method_name":}]
+        return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
+        
     return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id})
 
 # process each inimage and put its out image 
