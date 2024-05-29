@@ -25,24 +25,11 @@ from utils.load_coco_images import download
 # - process_request method to call all algorithm and gives the output as a experiment output 
 # - sub_process to get image by images 
 # - use django forms
-# - transform images to 224x224 before saving
 
 # Homepage serving
 def home(request):
     '''download()
     # for test purposes
-    parameters = {
-        "gradcam": {
-        },
-        "lime": {
-        },
-        "integrated_gradients": {
-        }
-    }
-
-    exp = run_comparison(["gradcam"], ["vgg19"], parameters, None, 'main/data', True, ['dog'])
-
-    print(exp.results['gradcam'])
     '''
     return render(request, "xaiapp/home.html")
 
@@ -101,6 +88,22 @@ def image_result(request, experiment_id, image_id):
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
+    # get experiment at this id
+    experiment = get_object_or_404(Experiment, pk=experiment_id)
+    # get configuration 
+    config = experiment.config
+    # parameters fo furute implementation
+    parameters = {m.name :{} for m in list(config.methods.all())}
+    # get all method of this configuration
+    methods=[m.name for m in list(config.methods.all())]
+
+    print("Model name ", config.model_name)
+    exp = run_comparison(methods, [config.model_name], parameters, None, 'main/data', True, ['dog'])
+
+    # All results in exp object
+    print(exp.results)
+    
+    '''
     print("processing")
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
@@ -111,6 +114,7 @@ def process_experiment(experiment_id):
         iimg.save()
     experiment.status = "finished"
     experiment.save()
+    '''
 
 # Update the experiment data : images and its status
 def get_experiment_update(request, experiment_id):

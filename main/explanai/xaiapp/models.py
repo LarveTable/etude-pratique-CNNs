@@ -9,7 +9,7 @@ class ExplanationMethod(models.Model):
     class Method(models.TextChoices):
             LM="1","lime"
             GC="2","gradcam"
-            IG="3","integrated_gradient"
+            IG="3","integrated_gradients"
             SH="4","shap"
     name = models.CharField(max_length=30, choices=Method)
 

@@ -66,6 +66,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, dataset_pa
                 # apply the regex pattern to the file name without extension
                 id = re.findall(id_pattern, file_name_without_extension) #id[0] contains the id
 
+                print("NN:",nn)
                 # instantiate the neural network and return the model and the predictions
                 match nn:
                     case 'vgg19':
@@ -143,7 +144,6 @@ def write_to_file(directory, file_name, content):
         file.write(content)
 
 if __name__ == "__main__":
-
     # for test purposes
     parameters = {
         "gradcam": {
