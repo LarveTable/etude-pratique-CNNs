@@ -1,16 +1,16 @@
 import time
-from image_processing import process_dataset, process_one
-from gradcam.vgg19_gradcam import gradcam_process
+from utils.image_processing import process_dataset, process_one
+from methods.gradcam.vgg19_gradcam import gradcam_process
 import cv2
 import os
 from tqdm import tqdm
-from LIME.VGG19_LIME import lime_process
+from methods.LIME.VGG19_LIME import lime_process
 import matplotlib.pyplot as plt
-from Integrated_Gradients.ig import ig_process
-from vgg19 import init_model_vgg19
-from evaluate_intersection import evaluate
+from methods.Integrated_Gradients.ig import ig_process
+from utils.vgg19 import init_model_vgg19
+from utils.evaluate_intersection import evaluate
 import re
-from explanation import Explanation
+from utils.explanation import Explanation
 import random
 
 #to comment
@@ -133,19 +133,22 @@ def write_to_file(directory, file_name, content):
     with open(directory+'/'+file_name, 'w') as file:
         file.write(content)
 
-# for test purposes
-parameters = {
-    "gradcam": {
-    },
-    "lime": {
-    },
-    "integrated_gradients": {
-    }
-}
-exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+if __name__ == "__main__":
 
-print(exp.results['gradcam'])
-#filter = exp.results['gradcam'][161609]['filtered_image']
-#cv2.imshow('filtered', filter)
-#cv2.waitKey(0)
-#print(exp.results['lime'][90003]['result_intersect'])
+    # for test purposes
+    parameters = {
+        "gradcam": {
+        },
+        "lime": {
+        },
+        "integrated_gradients": {
+        }
+    }
+
+    exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+
+    print(exp.results['gradcam'])
+    #filter = exp.results['gradcam'][161609]['filtered_image']
+    #cv2.imshow('filtered', filter)
+    #cv2.waitKey(0)
+    #print(exp.results['lime'][90003]['result_intersect'])

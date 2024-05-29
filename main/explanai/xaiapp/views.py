@@ -8,6 +8,7 @@ from .models import Config, InImage, Experiment
 
 import threading
 
+from .main import *
 # 
 # TODO :
 # - Use pickle to save and get the model easily
@@ -26,6 +27,19 @@ import threading
 
 # Homepage serving
 def home(request):
+    '''# for test purposes
+    parameters = {
+        "gradcam": {
+        },
+        "lime": {
+        },
+        "integrated_gradients": {
+        }
+    }
+
+    exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+
+    print(exp.results['gradcam'])'''
     return render(request, "xaiapp/home.html")
 
 # render result page with form data and results showing up 

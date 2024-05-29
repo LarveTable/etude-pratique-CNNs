@@ -9,8 +9,9 @@ import numpy as np
 #to comment
 
 def evaluate(id, catNms, mask):
+    print(os.getcwd())
     dataType='val2017'
-    dataDir='main/cocoapi'
+    dataDir='main/explanai/cocoapi'
     dataType='val2017'
     annFile='{}/annotations/instances_{}.json'.format(dataDir,dataType) # annotations
 

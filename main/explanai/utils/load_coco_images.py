@@ -7,7 +7,7 @@ import random
 #to comment
 
 def download(dataType='val2017', catNms=['dog'], number_of_images=5, randomized=True):
-    dataDir='main/cocoapi'
+    dataDir='main/explanai/cocoapi' 
     dataType='val2017'
     annFile='{}/annotations/instances_{}.json'.format(dataDir,dataType) # annotations
 
