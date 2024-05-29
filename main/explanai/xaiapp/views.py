@@ -116,7 +116,7 @@ def process_experiment(experiment_id):
     experiment.save()
     '''
 
-# Update the experiment data : images and its status
+# Update the experiment data : images and experiment status
 def get_experiment_update(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config=experiment.config
@@ -134,7 +134,7 @@ def get_experiment_update(request, experiment_id):
                 iimg_status = {"imgName":str(iimg.image), "status": iimg.status}
                 data["status"].append(iimg_status)
 
-            print(data)
+            #print(data)
             json_data = json.dumps(data)
             yield f"data: {json_data}\n\n"
 
