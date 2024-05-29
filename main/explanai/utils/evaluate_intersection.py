@@ -24,6 +24,8 @@ def evaluate(id, catNms, mask):
 
     result_dict = {}
 
+    black_image = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.uint8)
+
     for ann in anns:
         coco_mask = coco.annToMask(ann) # numpy 2D array of the mask
 
@@ -31,6 +33,8 @@ def evaluate(id, catNms, mask):
         intersection = 0
         for i in range(mask.shape[0]):
             for j in range(mask.shape[1]):
+                if np.all(coco_mask[i][j]) == 1:
+                    black_image[i][j] = 255
                 if np.all(coco_mask[i][j]) == 1 and np.all(mask[i][j]) != 0:
                     intersection += 1
                 
@@ -46,6 +50,6 @@ def evaluate(id, catNms, mask):
         plt.imshow(mask)
         plt.show()"""
     
-    return result_dict
+    return result_dict, black_image
 
 #evaluate(329447, ['dog'], None) #test

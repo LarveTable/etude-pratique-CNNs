@@ -10,7 +10,7 @@ class Explanation():
         self.results = {}
 
     def save_result(self, method, output_image, mask, filtered_image, elapsed_time, 
-                    pred_top1, pred_top5, second_pass_pred, result_intersect, img_id, use_coco=False, coco_categories=None):
+                    pred_top1, pred_top5, second_pass_pred, result_intersect, img_id, coco_masks, use_coco=False, coco_categories=None):
         
         if method not in self.results:
             self.results[method] = {}
@@ -26,7 +26,8 @@ class Explanation():
             "result_intersect": result_intersect,
             "use_coco": use_coco,
             "coco_categories": coco_categories,
-            "date": self.date
+            "date": self.date,
+            "coco_masks": coco_masks
         }
 
 

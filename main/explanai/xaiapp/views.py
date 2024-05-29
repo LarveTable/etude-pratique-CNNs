@@ -11,6 +11,8 @@ from .models import Config, InImage, Experiment
 import threading
 
 from .main import *
+from utils.load_coco_images import download
+
 # 
 # TODO :
 # - Use pickle to save and get the model easily
@@ -29,7 +31,8 @@ from .main import *
 
 # Homepage serving
 def home(request):
-    '''# for test purposes
+    '''download()
+    # for test purposes
     parameters = {
         "gradcam": {
         },
@@ -39,7 +42,7 @@ def home(request):
         }
     }
 
-    exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+    exp = run_comparison(["gradcam"], ["vgg19"], parameters, None, 'main/data', True, ['dog'])
 
     print(exp.results['gradcam'])'''
     return render(request, "xaiapp/home.html")

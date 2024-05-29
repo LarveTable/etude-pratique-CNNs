@@ -13,9 +13,15 @@ import re
 from utils.explanation import Explanation
 import random
 
+#BDD
+from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.http import HttpResponseRedirect, StreamingHttpResponse
+from django.urls import reverse
+from .models import Config, InImage, Experiment
+
 #to comment
 
-def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, use_coco=False, coco_categories=None
+def run_comparison(xai_methods, neural_networks, parameters, expe_id, dataset_path=None, use_coco=False, coco_categories=None
                    , number_of_images=None, randomized=None):
     if (not xai_methods or not neural_networks or not dataset_path or not use_coco):
         print("At least one parameter is missing.")
@@ -84,22 +90,24 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect = evaluate(int(id[0]), coco_categories, mask)
+                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
                             explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                         case 'lime':
                             output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw, parameters['lime'])
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect = evaluate(int(id[0]), coco_categories, mask)
+                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                         case 'shap':
                             #todo
                             cv2.imwrite(image_directory+'/'+file_name, output_image) 
@@ -111,11 +119,12 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect = evaluate(int(id[0]), coco_categories, mask)
+                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), use_coco, coco_categories)
+                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                         case _:
                             print("Error : method not found.")
                             return
@@ -145,7 +154,7 @@ if __name__ == "__main__":
         }
     }
 
-    exp = run_comparison(["gradcam"], ["vgg19"], parameters, 'main/data', True, ['dog'])
+    exp = run_comparison(["gradcam"], ["vgg19"], parameters, None, 'main/data', True, ['dog'])
 
     print(exp.results['gradcam'])
     #filter = exp.results['gradcam'][161609]['filtered_image']
