@@ -83,6 +83,7 @@ def experiments(request):
 def result(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
+    # get all method of this configuration
     methods=[m.name for m in list(config.methods.all())]
     images = config.inimage_set.all()
 

@@ -8,19 +8,28 @@
 <div class="container">
   <h1>Results</h1>
   <div class="p-2 container border rounded">
-    <h4>Experiment {{experiment_id}} : {{experiment_status}}</h4>
-    <p>
-      Model: {{config_data.model_name}} <br>
-      Methods tested:
-      <ul>
-        {% for mth_name in methods%}
+    <div class="flex row">
+      <div class="col">
+        <h4>Experiment n°{{experiment_id}} 
+          <span id="status_badge" class="badge text-bg-warning">{{experiment_status}}</span>
+        </h4>
+        <p>
+          Model: {{config_data.model_name}} <br>
+          Methods tested:
+        <ul>
+          {% for mth_name in methods%}
           <li>
             {{mth_name}}
           </li>
-        {%endfor%}
+          {%endfor%}
         </ul>
-      <!--Methods : {{config_data.methods}}-->
-    </p>
+        </p>
+      </div>
+      <!-- <div class="vr"></div> -->
+      <div class="col">
+        <h3>Informations</h3>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -82,6 +91,7 @@
     });
     // If the experiment is done : close the updates
     if ("{{experiment_status}}" == "finished") {
+      updateClass("status_badge", "text-bg-warning", "text-bg-success");
       eventSource.close();
     }
   };
