@@ -1,0 +1,41 @@
+{% extends "xaiapp/base.html"%} {%block title %} Results {% endblock %}
+{%block content %}
+
+<!-- 
+This page allow the user to select the result page from existing experiments
+-->
+<div class="container">
+  <div class="container mb-6 mt-4">
+    {% if expe_list %}
+    <div class="row">
+      {% for exp in expe_list %}
+      <div class="col-md-4 mb-3">
+        <div class="card h-100 d-flex flex-row " style="max-width: 100%;">
+          <div class="col-4 d-flex align-items-center">
+            <img src="{{ exp.img1.image.url }}" class="img-fluid rounded-start" alt="{{ exp.img1.image }}"
+              style="height: 100%; object-fit:cover">
+          </div>
+          <div class="col-7 d-flex flex-column justify-content-center">
+            <div class="card-body">
+              <h5 class="card-title">Experiment n°{{ exp.id }}</h5>
+              <p class="card-text"></p>
+              <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+            </div>
+          </div>
+          <div class="col-1 d-flex align-items-center justify-content-center">
+            <a href="/result/{{exp.id}}" class="text-decoration-none stretched-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

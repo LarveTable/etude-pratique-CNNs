@@ -81,6 +81,13 @@ def result(request, experiment_id):
     
     return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status, "methods":methods})
 
+# display all available experiments 1st image, a link too the result page
+def experiments_list(request):
+    expe_list = [{"id":e.id, "img1":e.config.inimage_set.first()} for e in Experiment.objects.all()]
+    return render(request, "xaiapp/experiments_list.html",context={"expe_list":expe_list})
+
+# Result page for an image : in image, prediction, out image for each methods 
+# in the experiment, 
 def image_result(request, experiment_id, image_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     in_image=get_object_or_404(InImage, pk=image_id)
@@ -120,7 +127,7 @@ def process_experiment(experiment_id):
 def get_experiment_update(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config=experiment.config
-    print("status = " , experiment.status)
+    #print("status = " , experiment.status)
     def event_stream():
         while 1:
             time.sleep(1)
