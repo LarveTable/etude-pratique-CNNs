@@ -9,7 +9,6 @@ import numpy as np
 #to comment
 
 def evaluate(id, catNms, mask):
-    print(os.getcwd())
     dataType='val2017'
     dataDir='main/explanai/cocoapi'
     dataType='val2017'
