@@ -16,14 +16,23 @@ class ExplanationMethod(models.Model):
     def __str__(self):
         return self.name
 
+class CocoCategories(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+
+# Configuration
 class Config(models.Model):
     model_name = models.CharField(max_length=50)
     methods=models.ManyToManyField(ExplanationMethod)
+    use_coco = models.BooleanField(null=False, blank=False, default=False)
+    coco_categories = models.ManyToManyField(CocoCategories)
 
     def __str__(self) -> str:
         return str(self.id)
 
-
+# Input image
 class InImage(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
     status = models.CharField(max_length=200,default="pending")
@@ -34,13 +43,23 @@ class Experiment(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
     status = models.CharField(max_length=200)
 
-class Result(models.Model):
-    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False) # finish
+class ExplanationResult(models.Model):
+    methods = models.ManyToManyField(ExplanationMethod)
+    neural_network = models.CharField(max_length=50)
+    date = models.DateField() 
 
+# Result for one image
+class Result(models.Model):
+    explanation_results = models.ForeignKey(ExplanationMethod, null=True, blank=True, on_delete=models.CASCADE)
+    elapsed_time = models.FloatField(null=True, blank=True, default=0)
+    pred_top1 = models.CharField(null=True, blank=True, max_length=50)
+    second_pass_pred = models.CharField(null=True, blank=True,max_length=50)
+    result_intersect = models.FloatField(null=True, blank=True)
+    use_coco = models.BooleanField(null=False, blank=False, default=False)
+    coco_categories = models.ManyToManyField(CocoCategories)
+
+# Output image
 class OutImage(models.Model):
-    input_image = models.ForeignKey(InImage, on_delete=models.CASCADE)
+    method = models.ForeignKey(ExplanationMethod, null=True, blank=True, on_delete=models.CASCADE)
+    result = models.ForeignKey(Result, null=True, blank=True,  on_delete=models.CASCADE)
     image = models.ImageField(null=False, blank=False, upload_to="output_images/")
-class Stat(models.Model):
-    result = models.ForeignKey(Result, on_delete=models.CASCADE)
-    time = models.IntegerField(default=0)
