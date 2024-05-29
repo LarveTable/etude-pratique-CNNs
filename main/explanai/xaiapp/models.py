@@ -41,10 +41,10 @@ class InImage(models.Model):
 # A config that's been executed containing results with images
 class Experiment(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
-    status = models.CharField(max_length=200)
+    status = models.CharField(max_length=200, default="created")
 
 class ExplanationResult(models.Model):
-    experiment = models.ForeignKey(Experiment, null=True, blank=True, on_delete=models.CASCADE)
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     methods = models.ManyToManyField(ExplanationMethod)
     neural_network = models.CharField(max_length=50)
     date = models.DateField() 

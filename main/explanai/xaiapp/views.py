@@ -56,7 +56,7 @@ def experiments(request):
             new_image_object.save()
 
         # New experiment
-        new_expe_object = Experiment.objects.create(config=new_config_object, status="pending")
+        new_expe_object = Experiment.objects.create(config=new_config_object, status="created")
         print(new_config_object.methods)
         new_expe_object.save()
 
@@ -76,7 +76,7 @@ def result(request, experiment_id):
 
     # if the experiment isn't done then execute its processing in background : 
     # expe is created  then when running then when done its satus is finished
-    if experiment.status != "finished":
+    if experiment.status != "finished" and experiment.status != "pending":
         experiment.status="pending"
         experiment.save()
         thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
