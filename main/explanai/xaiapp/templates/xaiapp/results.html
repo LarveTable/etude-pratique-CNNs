@@ -17,24 +17,25 @@
 </div>
 
 
-<div class="container mb-7">
+<div class="container mb-6">
   <div class="row row-cols-auto g-2">
     {%if in_images%}
     {% for img in in_images%}
     <div class="col-auto h-100">
-      <div id="{{img.image}}" class="card border-warning border-3" style="width: 100px;">
-        <img src="{{img.image.url}}" class="card-img-top"
-         style="width: 100%; height:100px; object-fit:cover;"
-         alt="{{img.image.url}}">
-        <div class="card-body">
-          <h5 class="card-title" style="overflow: scroll;
+      <a href="/result/{{experiment_id}}/{{img.id}}">
+        <div id="{{img.image}}" class="card border-warning border-3" style="width: 100px;">
+          <img src="{{img.image.url}}" class="card-img-top" style="width: 100%; height:100px; object-fit:cover;"
+            alt="{{img.image.url}}" title="{{img.image.url}}">
+          <div class="card-body pt-0 pb-0">
+            <!--<h5 class="card-title" style="overflow: scroll;
           max-width: 100%;
           text-overflow: ellipsis;
           width: fit-content;
-          white-space: nowrap;">{{img.image}}</h5>
-          <p class="card-text"><small class="text-muted">9s</small></p>
+          white-space: nowrap;">{{img.image}}</h5>-->
+            <p class="card-text"><small class="text-muted">9s</small></p>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
     {%endfor%}
     {%else%}
@@ -47,47 +48,47 @@
 
 <script>
   // SSE
-    const eventSource = new EventSource("/experiment_update/" + "{{experiment_id}}/");
+  const eventSource = new EventSource("/experiment_update/" + "{{experiment_id}}/");
 
-    console.log("ready for updates on Expe:" + "{{experiment_id}}" + "{{experiment_status}}");
-    // When a message is received 
-    eventSource.onmessage = function(e){
-      const data = JSON.parse(e.data);
-      console.log(data);
+  console.log("ready for updates on Expe:" + "{{experiment_id}}" + "{{experiment_status}}");
+  // When a message is received 
+  eventSource.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    console.log(data);
 
-      // Update UI status for every cards 
-      // each img status :
-      // find by Id 
-      // Change border according to status
-      const imagesStatus = data.status;
-      imagesStatus.forEach(imgS => {
-        console.log(imgS);
-        const imgCard = document.getElementById(imgS.imgName)
-        const imgStatus = imgS.status; 
-        console.log(imgStatus);
-        switch(imgStatus){
-          case "finished":
-           updateClass(imgS.imgName,"border-warning", "border-success");
-           break;
-        }
-      });
-      // If the experiment is done : close the updates
-      if("{{experiment_status}}" == "finished"){
-        eventSource.close();
+    // Update UI status for every cards 
+    // each img status :
+    // find by Id 
+    // Change border according to status
+    const imagesStatus = data.status;
+    imagesStatus.forEach(imgS => {
+      console.log(imgS);
+      const imgCard = document.getElementById(imgS.imgName)
+      const imgStatus = imgS.status;
+      console.log(imgStatus);
+      switch (imgStatus) {
+        case "finished":
+          updateClass(imgS.imgName, "border-warning", "border-success");
+          break;
       }
-    };
-
-
-    eventSource.onerror = function(e){
-      console.error('EventSource failed:', e);
-    };
-
-    function updateClass(id, oldClass, newClass){
-      const e = document.getElementById(id);
-    
-      e.classList.remove(oldClass);
-      e.classList.add(newClass);
+    });
+    // If the experiment is done : close the updates
+    if ("{{experiment_status}}" == "finished") {
+      eventSource.close();
     }
+  };
+
+
+  eventSource.onerror = function (e) {
+    console.error('EventSource failed:', e);
+  };
+
+  function updateClass(id, oldClass, newClass) {
+    const e = document.getElementById(id);
+
+    e.classList.remove(oldClass);
+    e.classList.add(newClass);
+  }
 
 </script>
 

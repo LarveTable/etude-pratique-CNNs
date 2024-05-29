@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
 from .models import Config, InImage, Experiment
 
+# from ..main import run_comparison
+
 import threading
 
 from .main import *
@@ -82,6 +84,11 @@ def result(request, experiment_id):
         thread1.start()
     
     return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status})
+
+def image_result(request, experiment_id, image_id):
+    experiment = get_object_or_404(Experiment, pk=experiment_id)
+    in_image=get_object_or_404(InImage, pk=image_id)
+    return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id})
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
