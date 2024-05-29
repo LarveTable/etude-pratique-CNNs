@@ -65,7 +65,7 @@ def lime_process(img, file_name, nn, pred_raw, parameters=None):
 
         def load_class_labels(self):
             idx2label, cls2label, cls2idx = [], {}, {}
-            file_path = './main/LIME/imagenet_class_index.json'
+            file_path = 'main/explanai/methods/LIME/imagenet_class_index.json'
             with open(file_path, 'r') as read_file:
                 class_idx = json.load(read_file)
                 idx2label = [class_idx[str(k)][1] for k in range(len(class_idx))]
