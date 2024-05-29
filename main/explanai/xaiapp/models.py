@@ -62,4 +62,7 @@ class Result(models.Model):
 class OutImage(models.Model):
     method = models.ForeignKey(ExplanationMethod, null=True, blank=True, on_delete=models.CASCADE)
     result = models.ForeignKey(Result, null=True, blank=True,  on_delete=models.CASCADE)
-    image = models.ImageField(null=False, blank=False, upload_to="output_images/")
+    final = models.ImageField(null=False, blank=False, upload_to="output_images/final")
+    mask = models.ImageField(null=False, blank=False, upload_to="output_images/mask")
+    filtered = models.ImageField(null=False, blank=False, upload_to="output_images/filtered")
+    coco_masks = models.ImageField(null=False, blank=False, upload_to="output_images/coco_masks")

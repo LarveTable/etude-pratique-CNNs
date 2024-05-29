@@ -18,7 +18,7 @@ import shutil
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
-from .models import Config, InImage, Experiment
+from .models import Result, OutImage, Experiment
 
 #to comment
 
@@ -36,7 +36,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
         dataset_process_timer_start = time.time()
 
         # create a tmp file to store the dataset
-        dataset_path = "main/tmp"+str(expe_id)
+        dataset_path = "./main/tmp"+str(expe_id)
         directories_check([dataset_path+"/data"])
 
         experiment = get_object_or_404(Experiment, pk=expe_id)
@@ -63,6 +63,11 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                     
             explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
 
+            # get experiment at this id
+            experiment = get_object_or_404(Experiment, pk=expe_id)
+            # get configuration 
+            config = experiment.config
+
             # enumerate through the images and apply xai methods
             #fbar = tqdm(files)
             #for file_name in fbar:
@@ -72,10 +77,11 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                 img, _ = next(iterateur)
 
                 file_name = os.path.basename(str(iimg.image))
-                print(file_name)
+
+                file_name_without_extension = file_name.rsplit('_', 1)[0] # get rid of the string added by django
 
                 # get the file name without the extension
-                file_name_without_extension = os.path.splitext(file_name)[0]
+                #file_name_without_extension = os.path.splitext(file_name)[0]
 
                 # create a regex pattern for the id
                 id_pattern = r"^(\d*)"
@@ -96,7 +102,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                 for method in xai_methods:
 
                     # check if the image directory exists, if not create it
-                    image_directory = dataset_path+'/data/'+method+'/'+method+'_'+file_name_without_extension
+                    image_directory = 'main/result/images/'+method+'/'+method+'_'+file_name_without_extension
                     time_elapsed_directory = 'main/results/times/'+method+'/'+method+'_'+file_name_without_extension
                     directories_check([image_directory, time_elapsed_directory])
 
@@ -113,6 +119,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
                             explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
                                                     preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
+                            
                         case 'lime':
                             output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw, dataset_path, parameters['lime'])
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
