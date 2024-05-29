@@ -87,7 +87,7 @@ def gradcam_process(image_to_process, file_name, neural_network, pred, parameter
     #cv2.waitKey(0)
 
     superimposed_img = heatmap * 0.4 + img
-    
+    affected = 0
     final_mask = np.zeros_like(img)
     filtered_img = np.zeros_like(img)
     for i in range(mask_bw.shape[0]):
@@ -95,10 +95,11 @@ def gradcam_process(image_to_process, file_name, neural_network, pred, parameter
             if not np.all(mask_bw[i][j] == [0, 0, 0]):
                 filtered_img[i][j] = img[i][j]
                 final_mask[i][j] = [255, 255, 255]
+                affected += 1
 
     #temp
     """plt.axis('off')
     plt.imshow(filtered_img)
     plt.show()"""
 
-    return superimposed_img, elapsed, final_mask, filtered_img #change mask to mask_bw to get the black and white mask and don't forget to pixelate it
+    return superimposed_img, elapsed, final_mask, filtered_img, affected #change mask to mask_bw to get the black and white mask and don't forget to pixelate it

@@ -79,7 +79,7 @@ def run_comparison(xai_methods, neural_networks, parameters, dataset_path=None, 
 
                     match method:
                         case 'gradcam':
-                            output_image, time_elapsed, mask, filtered_image = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, parameters['gradcam']) #mask to intersect and filtered to re inject
+                            output_image, time_elapsed, mask, filtered_image, affected_pixels_method = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, parameters['gradcam']) #mask to intersect and filtered to re inject
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
