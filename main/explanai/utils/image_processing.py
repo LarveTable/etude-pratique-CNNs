@@ -10,15 +10,12 @@ import os
 def process_dataset(path):
 
     # image folder path
-    folder_path = path+'/images'
+    folder_path = path+"/data"
 
     # get the list of all images in the folder, excluding those starting with "."
     files = [file_name for file_name in os.listdir(folder_path) if not file_name.startswith(".")]
 
     if (files != []):
-        
-        # sort the files alphabetically
-        files = sorted(files)
 
         # the transformation to apply to every image in the dataset
         transform = transforms.Compose([transforms.Resize((224, 224)), 

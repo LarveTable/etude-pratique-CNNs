@@ -98,7 +98,7 @@ def process_experiment(experiment_id):
     methods=[m.name for m in list(config.methods.all())]
 
     print("Model name ", config.model_name)
-    exp = run_comparison(methods, [config.model_name], parameters, None, 'main/data', True, ['dog'])
+    exp = run_comparison(methods, [config.model_name], parameters, experiment_id, True, ['dog'])
 
     # All results in exp object
     print(exp.results)

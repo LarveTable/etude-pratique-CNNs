@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 #to comment
 
-def gradcam_process(image_to_process, file_name, neural_network, pred, parameters=None) :
+def gradcam_process(image_to_process, file_name, neural_network, pred, dataset_path, parameters=None) :
 
     start = time.time()
 
@@ -44,7 +44,7 @@ def gradcam_process(image_to_process, file_name, neural_network, pred, parameter
     heatmap /= torch.max(heatmap)
     
     # interpolate
-    img = cv2.imread('main/data/images/'+file_name)
+    img = cv2.imread(dataset_path+'/data/'+file_name)
     
     # compute the heatmap
     heatmap = np.asarray(heatmap)
