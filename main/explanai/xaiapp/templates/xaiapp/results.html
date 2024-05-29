@@ -11,6 +11,14 @@
     <h4>Experiment {{experiment_id}} : {{experiment_status}}</h4>
     <p>
       Model: {{config_data.model_name}} <br>
+      Methods tested:
+      <ul>
+        {% for mth_name in methods%}
+          <li>
+            {{mth_name}}
+          </li>
+        {%endfor%}
+        </ul>
       <!--Methods : {{config_data.methods}}-->
     </p>
   </div>

@@ -6,7 +6,12 @@ from django.db import models
 # use choices for defined models
 
 class ExplanationMethod(models.Model):
-    name = models.CharField(max_length=30)
+    class Method(models.TextChoices):
+            LM="1","lime"
+            GC="2","gradcam"
+            IG="3","integrated_gradient"
+            SH="4","shap"
+    name = models.CharField(max_length=30, choices=Method)
 
     def __str__(self):
         return self.name

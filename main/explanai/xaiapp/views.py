@@ -4,9 +4,7 @@ import json
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
-from .models import Config, InImage, Experiment
-
-# from ..main import run_comparison
+from .models import Config, InImage, Experiment,ExplanationMethod
 
 import threading
 
@@ -44,7 +42,8 @@ def home(request):
 
     exp = run_comparison(["gradcam"], ["vgg19"], parameters, None, 'main/data', True, ['dog'])
 
-    print(exp.results['gradcam'])'''
+    print(exp.results['gradcam'])
+    '''
     return render(request, "xaiapp/home.html")
 
 # render result page with form data and results showing up 
@@ -54,10 +53,14 @@ def experiments(request):
         images = request.FILES.getlist('images')
 
         modelName = data['modelName']
+        method_selection = data.getlist('methodSelection')
 
         # save configuration
         new_config_object = Config.objects.create(model_name=modelName)
         new_config_object.save()
+
+        for method_name in method_selection:
+            new_config_object.methods.add(ExplanationMethod.objects.get(name=method_name))
 
         # save images
         for img in images : 
@@ -67,6 +70,7 @@ def experiments(request):
 
         # New experiment
         new_expe_object = Experiment.objects.create(config=new_config_object, status="pending")
+        print(new_config_object.methods)
         new_expe_object.save()
 
         # Redirect to result/expeID
@@ -79,6 +83,7 @@ def experiments(request):
 def result(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
+    methods=[m.name for m in list(config.methods.all())]
     images = config.inimage_set.all()
 
     # if the experiment isn't done then execute its processing in background
@@ -86,7 +91,7 @@ def result(request, experiment_id):
         thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
         thread1.start()
     
-    return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status})
+    return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status, "methods":methods})
 
 def image_result(request, experiment_id, image_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)

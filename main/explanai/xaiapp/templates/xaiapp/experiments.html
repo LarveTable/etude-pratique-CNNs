@@ -44,56 +44,44 @@
           <div class="list-group ">
             <div class="d-grid">
               <label class="list-group-item d-inline">
-                <input class="form-check-input" type="checkbox" value="shap">
+                <input class="form-check-input" type="checkbox" name="methodSelection" value="lime">
                 <span>
-                  SHAP
-                  <small class="d-block text-body-secondary">Shapley Values</small>
+                  LIME
+                  <small class="d-block text-body-secondary">Lime</small>
                 </span>
               </label>
-
               <label class="list-group-item d-inline">
-                <input class="form-check-input" type="checkbox" name="method-selection" value="gradcam">
+                <input class="form-check-input" type="checkbox" name="methodSelection" value="gradcam">
                 <span>
                   GradCam
                   <small class="d-block text-body-secondary">Grad Cam</small>
                 </span>
               </label>
-            <label class="list-group-item d-inline">
-              <input class="form-check-input" type="checkbox" name="method-selection" value="integrad">
-              <span>
-                Integrated Gradient
-                <small class="d-block text-body-secondary">Integradient Gradient </small>
-              </span>
-            </label>
-            <label class="list-group-item d-inline">
-              <input class="form-check-input" type="checkbox" name="method-selection" value="lime">
-              <span>
-                LIME 
-                <small class="d-block text-body-secondary">Lime</small>
-              </span>
-            </label>
+              <label class="list-group-item d-inline">
+                <input class="form-check-input" type="checkbox" name="methodSelection" value="integrated_gradient">
+                <span>
+                  Integrated Gradient
+                  <small class="d-block text-body-secondary">Integradient Gradient </small>
+                </span>
+              </label>
+              <label class="list-group-item d-inline">
+                <input class="form-check-input" type="checkbox" name="methodSelection" value="shap">
+                <span>
+                  SHAP
+                  <small class="d-block text-body-secondary">Shapley Values</small>
+                </span>
+              </label>
             </div>
           </div>
         </div>
 
         <div class="col-sm-6">
-          <button
-            type="button"
-            name="saveConfig"
-            id="saveConfig"
-            class="btn btn-primary"
-            disabled
-          >
+          <button type="button" name="saveConfig" id="saveConfig" class="btn btn-primary" disabled>
             save config / load config
           </button>
         </div>
         <div class="col-lg-6">
-          <button
-            type="submit"
-            name="startBtn"
-            id="startBtn"
-            class="btn btn-primary"
-          >
+          <button type="submit" name="startBtn" id="startBtn" class="btn btn-primary">
             Start
           </button>
         </div>
