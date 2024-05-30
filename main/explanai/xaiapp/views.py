@@ -97,12 +97,15 @@ def image_result(request, experiment_id, image_id):
     in_image=get_object_or_404(InImage, pk=image_id)
     lime_image=get_object_or_404(InImage, pk=10)
     gradcam_image=get_object_or_404(InImage, pk=12)
-    integrated_image=get_object_or_404(InImage, pk=11)
+    integrated_image=get_object_or_404(InImage, pk=20)
     masked_image=get_object_or_404(InImage, pk=2)
     mask_image=get_object_or_404(InImage, pk=2)
-    coco_image=get_object_or_404(InImage, pk=13)
     
+    gradcam_mask=get_object_or_404(InImage, pk=19)
     coco_mask=get_object_or_404(InImage, pk=13)
+
+    lime_mask=get_object_or_404(InImage, pk=17)
+    integrated_mask=get_object_or_404(InImage, pk=18)
 
     if in_image.status == "finished":
         #result = in_image.result_set.first()
@@ -113,7 +116,10 @@ def image_result(request, experiment_id, image_id):
                 "gradcam_image":gradcam_image,
                 "mask_image":mask_image,
                 "masked_image":masked_image,
-                "coco_image":coco_image,
+                "coco_mask":coco_mask,
+                "gradcam_mask":gradcam_mask,
+                "integrated_mask":integrated_mask,
+                "lime_mask":lime_mask,
                 "prediction":"Appenzeller",
                 }
         return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
