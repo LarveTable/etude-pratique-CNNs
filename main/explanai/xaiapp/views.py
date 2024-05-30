@@ -92,18 +92,37 @@ def experiments_list(request):
 # Result page for an image : in image, prediction, out image for each methods 
 # in the experiment, 
 def image_result(request, experiment_id, image_id):
+    result={}
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     in_image=get_object_or_404(InImage, pk=image_id)
+    lime_image=get_object_or_404(InImage, pk=10)
+    gradcam_image=get_object_or_404(InImage, pk=12)
+    integrated_image=get_object_or_404(InImage, pk=11)
+    masked_image=get_object_or_404(InImage, pk=2)
+    mask_image=get_object_or_404(InImage, pk=2)
+    coco_image=get_object_or_404(InImage, pk=13)
+    
+    coco_mask=get_object_or_404(InImage, pk=13)
+
     if in_image.status == "finished":
-        result = in_image.result_set.first()
-        result_data={"explanation_data":{"pred1":result.pred_top1}}
-        result_data["methods_data"] = [{"method_name":}]
+        #result = in_image.result_set.first()
+        #result_data={"explanation_data":{"pred1":result.pred_top1}}
+        #result_data["methods_data"] = [{"method_name":}]
+        result={"lime_image":lime_image,
+                "integrated_image":integrated_image,
+                "gradcam_image":gradcam_image,
+                "mask_image":mask_image,
+                "masked_image":masked_image,
+                "coco_image":coco_image,
+                "prediction":"Appenzeller",
+                }
         return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
         
     return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id})
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
+    '''
     # get experiment at this id
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     # get configuration 
@@ -118,19 +137,17 @@ def process_experiment(experiment_id):
 
     # All results in exp object
     print(exp.results)
-    
     '''
-    print("processing")
+    
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
     for iimg in config.inimage_set.all():
-        time.sleep(2) # simulate delay for testing
+        time.sleep(10) # simulate delay for testing
         iimg.status = "finished"
         print("finished : ", str(iimg.image))
         iimg.save()
     experiment.status = "finished"
     experiment.save()
-    '''
 
 # Update the experiment data : images and experiment status
 def get_experiment_update(request, experiment_id):
@@ -147,7 +164,7 @@ def get_experiment_update(request, experiment_id):
             }
             for iimg in config.inimage_set.all():
                 # name, status, outimage
-                iimg_status = {"imgName":str(iimg.image), "status": iimg.status}
+                iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id}
                 data["status"].append(iimg_status)
 
             #print(data)

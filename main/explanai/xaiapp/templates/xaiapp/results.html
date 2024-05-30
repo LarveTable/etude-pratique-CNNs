@@ -15,19 +15,22 @@
         </h4>
         <p>
           Model: {{config_data.model_name}} <br>
-          Methods tested:
-        <ul>
-          {% for mth_name in methods%}
-          <li>
-            {{mth_name}}
-          </li>
-          {%endfor%}
-        </ul>
+          Methods tested: <br>
+        <ul>{% for mth_name in methods%} <li>{{mth_name}}</li>{%endfor%}</ul>
         </p>
       </div>
       <!-- <div class="vr"></div> -->
       <div class="col">
         <h3>Informations</h3>
+        <p>
+          Total time: 124s <br>
+          {% for mth_name in methods%}
+            Time for {{mth_name}}: 34s <br>
+          {%endfor%}
+          Mean Time for one image: 42s <br>
+          Max Time: 68s
+          Min Time: 9s
+        </p>
       </div>
     </div>
   </div>
@@ -91,10 +94,11 @@
 
           // Add link to image 
           let imgLink = document.getElementById("link-"+imgS.imgName);
+          console.log(imgS.imgName)
           // Check if the element exists
           if (imgLink) {
               // Modify the href attribute
-              imgLink.href = '/result/{{experiment_id}}/{{img.id}}';
+              imgLink.href = '/result/{{experiment_id}}/' + imgS.id + '/';
           }
           break;
       }
