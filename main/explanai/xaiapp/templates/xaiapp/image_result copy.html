@@ -1,0 +1,57 @@
+{% extends "xaiapp/base.html"%} {%block title %} Results {% endblock %}
+{%block content %}
+
+<div class="container">
+<!-- <a class="btn btn-primary m-2" href="/result/{{experiment_id}}/">Back to experiment</a> -->
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/result/{{experiment_id}}/">Experiment</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{in_image.image}}</li>
+  </ol>
+</nav>
+
+  <div class="p-2 container border rounded m-2">
+    <h4>{{in_image.image}} - prediction: {{result.prediction}} - total time: 43s</h4>
+        <img src="{{in_image.image.url}}" class="" style="width: 100%; height:100%;"
+        alt="{{in_image.image.url}}"
+        title="{{in_image.image.url}}">
+  </div>
+</div>
+<!-- Use a for each methods instead-->
+<div class="container">
+  <div class="p-2 container border rounded m-2">
+    <h4>GradCam - time : 9s</h2>
+        <img src="{{result.gradcam_image.image.url}}" class="" style="width: 100%; height:100%;"
+        alt="{{in_image.image.url}}"
+        title="{{in_image.image.url}}">
+  </div>
+</div>
+
+<div class="container">
+  <div class="p-2 container border rounded m-2">
+    <h4>LIME - time: 15s</h3>
+        <img src="{{result.lime_image.image.url}}" class="" style="width: 100%; height:100%;"
+        alt="{{in_image.image.url}}"
+        title="{{in_image.image.url}}">
+  </div>
+</div>
+
+<div class="container">
+  <div class="p-2 container border rounded m-2">
+    <h4>Integrated Gradient - time: 8s</h4>
+        <img src="{{result.integrated_image.image.url}}" class="" style="width: 100%; height:100%;"
+        alt="{{in_image.image.url}}"
+        title="{{in_image.image.url}}">
+  </div>
+</div>
+
+<div class="container">
+  <div class="p-2 container border rounded m-2">
+    <h4>Coco intersection - precentage: 92.3% </h4>
+        <img src="{{result.coco_image.image.url}}" class="" style="width: 100%; height:100%;"
+        alt="{{in_image.image.url}}"
+        title="{{in_image.image.url}}">
+  </div>
+</div>
+{% endblock %}

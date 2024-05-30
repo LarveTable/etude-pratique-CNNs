@@ -128,7 +128,7 @@ def image_result(request, experiment_id, image_id):
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
-    
+    '''
     # get experiment at this id
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     # get configuration 
@@ -143,8 +143,8 @@ def process_experiment(experiment_id):
 
     # All results in exp object
     print(exp.results)
+    '''
     
-
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
     for iimg in config.inimage_set.all():
@@ -170,7 +170,7 @@ def get_experiment_update(request, experiment_id):
             }
             for iimg in config.inimage_set.all():
                 # name, status, outimage
-                iimg_status = {"imgName":str(iimg.image), "status": iimg.status}
+                iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id}
                 data["status"].append(iimg_status)
 
             #print(data)
