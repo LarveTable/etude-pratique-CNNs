@@ -26,6 +26,10 @@ from django.urls import reverse
 from .models import Result, OutImage, Experiment, ExplanationMethod, CocoCategories
 
 #to comment
+#todo
+#close the open
+#do the same for the other methods
+#remirgate db
 
 def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=False, coco_categories=None):
     if (not xai_methods or not neural_networks or not parameters or not expe_id):
@@ -89,7 +93,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                 file_name_without_extension = file_name.rsplit('_', 1)[0] # get rid of the string added by django
 
                 # get the file name without the extension
-                #file_name_without_extension = os.path.splitext(file_name)[0]
+                file_name_without_extension = os.path.splitext(file_name)[0]
 
                 # create a regex pattern for the id
                 id_pattern = r"^(\d*)"
@@ -104,8 +108,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                         selected_nn_gradcam, _, _, pred_raw_gradcam = init_model_vgg19(img, file_name, use_gradcam=True)
                         preds_directory = 'main/results/predictions/'+nn+'/'+file_name_without_extension
                         directories_check([preds_directory])
-                        write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top1', pred_top1)
-                        write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top5', preds_top5)
+                        write_to_file(preds_directory, file_name_without_extension+'_top1.txt', pred_top1)
+                        write_to_file(preds_directory, file_name_without_extension+'_top5.txt', preds_top5)
 
                 for method in xai_methods:
 
@@ -150,18 +154,18 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             res.coco_categories.set(coco_categories_instances)
                             res.save()
 
-                            filtered_image = numpy_array_to_django_file(filtered_image)
-                            output_image = numpy_array_to_django_file(output_image)
-                            mask = numpy_array_to_django_file(mask)
-                            coco_masks = numpy_array_to_django_file(coco_masks)
+                            filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
+                            output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
+                            mask = numpy_array_to_django_file(mask, dataset_path+"/out")
+                            coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
 
                             method_instance = ExplanationMethod.objects.get(name=method)
                             out_img = res.outimage_set.create(method=method_instance, final=output_image, mask=mask, filtered=filtered_image, coco_masks=coco_masks)
                             out_img.save()
 
                             #retrieve elapsed time from db
-                            elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
-                            print("elapsed time : ", elapsed_time)
+                            #elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
+                            #print("elapsed time : ", elapsed_time)
 
                         case 'lime':
                             output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw, dataset_path, parameters['lime'])
@@ -219,32 +223,43 @@ def write_to_file(directory, file_name, content):
 def delete_directory(directory):
     shutil.rmtree(directory)
 
-def numpy_array_to_django_file(image_array):
+def numpy_array_to_django_file(image_array, save_dir):
     """
     Convert a NumPy array representing an image to a Django File object.
 
     Args:
     - image_array: The NumPy array representing the image.
+    - save_dir: Directory where the temporary file should be created.
 
     Returns:
     - File: The Django File object containing the image data.
     """
+    # Ensure the directory exists
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    # Ensure the NumPy array is of type uint8 and values are in the range 0-255
+    if image_array.dtype != np.uint8:
+        image_array = image_array.astype(np.uint8)
+    if image_array.max() > 255 or image_array.min() < 0:
+        image_array = np.clip(image_array, 0, 255)
 
     # Convert the NumPy array to a PIL image
     image_pil = Image.fromarray(image_array)
 
     # Determine the file format based on the original image format
     file_format = 'JPEG' if image_pil.mode in ('RGB', 'RGBA') else 'PNG'
+    suffix = '.' + file_format.lower()
 
-    # Save the PIL image to a temporary file
-    with tempfile.NamedTemporaryFile(suffix='.' + file_format.lower(), delete=False) as temp_file:
-        image_pil.save(temp_file, format=file_format)
-        temp_file.flush()
+    # Create a temporary file in the specified directory and write the image to it
+    temp_file_path = os.path.join(save_dir, next(tempfile._get_candidate_names()) + suffix)
+    image_pil.save(temp_file_path, format=file_format)
 
-        # Create a Django File object from the temporary file
-        django_file = File(temp_file)
-
-        return django_file
+    # Open the file and create a Django File object
+    temp_file = open(temp_file_path, 'rb')
+    django_file = File(temp_file, name=os.path.basename(temp_file_path))
+    
+    return django_file
 
 if __name__ == "__main__":
     # for test purposes
