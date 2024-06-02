@@ -13,14 +13,23 @@ import re
 from utils.explanation import Explanation
 import random
 import shutil
+from datetime import datetime
+from PIL import Image
+import tempfile
+from django.core.files import File
+import numpy as np
 
 #BDD
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
-from .models import Result, OutImage, Experiment
+from .models import Result, OutImage, Experiment, ExplanationMethod, CocoCategories
 
 #to comment
+#todo
+#close the open
+#do the same for the other methods
+#remirgate db
 
 def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=False, coco_categories=None):
     if (not xai_methods or not neural_networks or not parameters or not expe_id):
@@ -31,6 +40,9 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
         print("All parameters are present, processing...")
         # start the global timer
         global_timer_start = time.time()
+
+        # get date in YYYYMMDD format
+        date = datetime.today().strftime('%Y-%m-%d')
 
         # start the dataset processing timer
         dataset_process_timer_start = time.time()
@@ -81,7 +93,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                 file_name_without_extension = file_name.rsplit('_', 1)[0] # get rid of the string added by django
 
                 # get the file name without the extension
-                #file_name_without_extension = os.path.splitext(file_name)[0]
+                file_name_without_extension = os.path.splitext(file_name)[0]
 
                 # create a regex pattern for the id
                 id_pattern = r"^(\d*)"
@@ -96,19 +108,26 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                         selected_nn_gradcam, _, _, pred_raw_gradcam = init_model_vgg19(img, file_name, use_gradcam=True)
                         preds_directory = 'main/results/predictions/'+nn+'/'+file_name_without_extension
                         directories_check([preds_directory])
-                        write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top1', pred_top1)
-                        write_to_file(preds_directory, file_name_without_extension+'.txt'+'_top5', preds_top5)
+                        write_to_file(preds_directory, file_name_without_extension+'_top1.txt', pred_top1)
+                        write_to_file(preds_directory, file_name_without_extension+'_top5.txt', preds_top5)
 
                 for method in xai_methods:
 
                     # check if the image directory exists, if not create it
-                    image_directory = 'main/result/images/'+method+'/'+method+'_'+file_name_without_extension
+                    image_directory = 'main/results/images/'+method+'/'+method+'_'+file_name_without_extension
                     time_elapsed_directory = 'main/results/times/'+method+'/'+method+'_'+file_name_without_extension
                     directories_check([image_directory, time_elapsed_directory])
 
                     match method:
                         case 'gradcam':
                             output_image, time_elapsed, mask, filtered_image, affected_pixels_method = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, dataset_path, parameters['gradcam']) #mask to intersect and filtered to re inject
+                            
+                            # Scale the pixel values to the range [0, 255]
+                            output_image = (output_image - np.min(output_image)) / (np.max(output_image) - np.min(output_image)) * 255
+
+                            # Convert the data type to uint8
+                            output_image = output_image.astype(np.uint8)
+                            
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
@@ -120,6 +139,34 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
                                                     preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                             
+                            # Obtenez ou créez les instances de CocoCategories
+                            coco_categories_instances = []
+                            for name in coco_categories:
+                                category, _ = CocoCategories.objects.get_or_create(name=name)
+                                coco_categories_instances.append(category)
+
+                            ex_res = experiment.explanationresult_set.create(neural_network=nn, date=date)
+                            for method_name in xai_methods:
+                                ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
+                            ex_res.save()
+
+                            res = ex_res.result_set.create(elapsed_time=time_elapsed, pred_top1=pred_top1, second_pass_pred=second_pass_pred, result_intersect=result_intersect, use_coco=use_coco)
+                            res.coco_categories.set(coco_categories_instances)
+                            res.save()
+
+                            filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
+                            output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
+                            mask = numpy_array_to_django_file(mask, dataset_path+"/out")
+                            coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
+
+                            method_instance = ExplanationMethod.objects.get(name=method)
+                            out_img = res.outimage_set.create(method=method_instance, final=output_image, mask=mask, filtered=filtered_image, coco_masks=coco_masks)
+                            out_img.save()
+
+                            #retrieve elapsed time from db
+                            #elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
+                            #print("elapsed time : ", elapsed_time)
+
                         case 'lime':
                             output_image, time_elapsed, mask, filtered_image = lime_process(img, file_name, selected_nn, pred_raw, dataset_path, parameters['lime'])
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
@@ -175,6 +222,44 @@ def write_to_file(directory, file_name, content):
 
 def delete_directory(directory):
     shutil.rmtree(directory)
+
+def numpy_array_to_django_file(image_array, save_dir):
+    """
+    Convert a NumPy array representing an image to a Django File object.
+
+    Args:
+    - image_array: The NumPy array representing the image.
+    - save_dir: Directory where the temporary file should be created.
+
+    Returns:
+    - File: The Django File object containing the image data.
+    """
+    # Ensure the directory exists
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    # Ensure the NumPy array is of type uint8 and values are in the range 0-255
+    if image_array.dtype != np.uint8:
+        image_array = image_array.astype(np.uint8)
+    if image_array.max() > 255 or image_array.min() < 0:
+        image_array = np.clip(image_array, 0, 255)
+
+    # Convert the NumPy array to a PIL image
+    image_pil = Image.fromarray(image_array)
+
+    # Determine the file format based on the original image format
+    file_format = 'JPEG' if image_pil.mode in ('RGB', 'RGBA') else 'PNG'
+    suffix = '.' + file_format.lower()
+
+    # Create a temporary file in the specified directory and write the image to it
+    temp_file_path = os.path.join(save_dir, next(tempfile._get_candidate_names()) + suffix)
+    image_pil.save(temp_file_path, format=file_format)
+
+    # Open the file and create a Django File object
+    temp_file = open(temp_file_path, 'rb')
+    django_file = File(temp_file, name=os.path.basename(temp_file_path))
+    
+    return django_file
 
 if __name__ == "__main__":
     # for test purposes
