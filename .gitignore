@@ -3,3 +3,6 @@ __pycache__
 .venv
 results
 annotations
+tmp*
+input_images
+output_images
