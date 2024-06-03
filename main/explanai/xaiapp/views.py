@@ -102,17 +102,17 @@ def image_result(request, experiment_id, image_id):
     in_image=get_object_or_404(InImage, pk=image_id)
 
     # if lime : get lime image
-    lime_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="lime"),in_image=in_image)
+    lime_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="lime"),in_image=in_image)
     lime_image=lime_result.final
     lime_mask=lime_result.mask
 
     # if gradcam : get gradcam image
-    gradcam_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="gradcam"),in_image=in_image)
+    gradcam_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="gradcam"),in_image=in_image)
     gradcam_image=gradcam_result.final
     gradcam_mask=gradcam_result.mask
 
     #if IG : get IG image
-    integrated_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="integrated_gradients"),in_image=in_image)
+    integrated_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="integrated_gradients"),in_image=in_image)
     integrated_image=integrated_result.final
     integrated_mask=integrated_result.mask
 
