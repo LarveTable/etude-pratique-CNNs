@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # TODO:
 # - Change : Image -> InputImage
@@ -42,9 +43,9 @@ class InImage(models.Model):
 class Experiment(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
     status = models.CharField(max_length=200, default="created")
-    creation_date = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
-        return self.creation_date.strftime('%Y-%m-%d %H:%M:%S')
+        return self.creation_at.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class ExplanationResult(models.Model):
