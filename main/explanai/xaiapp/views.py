@@ -76,7 +76,7 @@ def result(request, experiment_id):
 
     # if the experiment isn't done then execute its processing in background : 
     # expe is created  then when running then when done its satus is finished
-    if experiment.status != "finished" and experiment.status != "pending":
+    if experiment.status != "finished":
         experiment.status="pending"
         experiment.save()
         thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
@@ -128,7 +128,7 @@ def image_result(request, experiment_id, image_id):
 
 # process each inimage and put its out image 
 def process_experiment(experiment_id):
-    """
+    
     # get experiment at this id
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     # get configuration 
@@ -143,7 +143,7 @@ def process_experiment(experiment_id):
 
     # All results in exp object
     print(exp.results)
-    """
+    
 
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config

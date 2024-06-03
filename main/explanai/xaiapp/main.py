@@ -120,14 +120,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
 
                     match method:
                         case 'gradcam':
-                            output_image, time_elapsed, mask, filtered_image, affected_pixels_method = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, dataset_path, parameters['gradcam']) #mask to intersect and filtered to re inject
-                            
-                            # Scale the pixel values to the range [0, 255]
-                            output_image = (output_image - np.min(output_image)) / (np.max(output_image) - np.min(output_image)) * 255
-
-                            # Convert the data type to uint8
-                            output_image = output_image.astype(np.uint8)
-                            
+                            output_image, time_elapsed, mask, filtered_image, affected_pixels_method = gradcam_process(img, file_name, selected_nn_gradcam, pred_raw_gradcam, dataset_path, parameters['gradcam']) #mask to intersect and filtered to re inject             
                             cv2.imwrite(image_directory+'/'+file_name, output_image)
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
@@ -240,6 +233,7 @@ def numpy_array_to_django_file(image_array, save_dir):
 
     # Ensure the NumPy array is of type uint8 and values are in the range 0-255
     if image_array.dtype != np.uint8:
+        print("converted to uint8")
         image_array = image_array.astype(np.uint8)
     if image_array.max() > 255 or image_array.min() < 0:
         image_array = np.clip(image_array, 0, 255)
