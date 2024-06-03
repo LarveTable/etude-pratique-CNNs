@@ -40,3 +40,5 @@ def directories_check(directories):
     for directory in directories:
         if not os.path.exists(directory):
             os.makedirs(directory)
+
+#download() #test
