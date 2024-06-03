@@ -53,7 +53,7 @@
           text-overflow: ellipsis;
           width: fit-content;
           white-space: nowrap;">{{img.image}}</h5>-->
-            <p class="card-text"><small class="text-muted">0s</small></p>
+            <p class="card-text"><small id="time-{{img.image}}" class="text-muted">0s</small></p>
           </div>
         </div>
       </a>
@@ -96,6 +96,13 @@
               // Modify the href attribute
               imgLink.href = '/result/{{experiment_id}}/' + imgS.id + '/';
           }
+          // Time 
+          let imgTime = document.getElementById("time-"+imgS.imgName);
+          if (imgTime) {
+              // Modify the href attribute
+              imgTime.innerHTML = imgS.img_time + "s";
+          }
+
           break;
       }
       //const times = data.times;

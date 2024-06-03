@@ -224,7 +224,8 @@ def get_experiment_update(request, experiment_id):
             }
             for iimg in config.inimage_set.all():
                 # name, status, outimage
-                iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id, "img_time":0}
+                img_time=round(Result.objects.get(intput_image=iimg).elapsed_time,2)
+                iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id, "img_time":img_time}
                 data["status"].append(iimg_status)
 
             #print(data)
