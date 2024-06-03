@@ -1,97 +1,28 @@
-# etude-pratique-CNNs
-> Repository to share our codes and other useful files on our CNNs
-> explanation project. By Adèle, Sulaymane, Taha, Yorick.
+# Explainable AI comparison app
+By Adèle, Sulaymane, Taha, Yorick.
 
-Repository for our practical study "A Comparative Study of Neural Network Explanation Methods" realized in 2023/2024. In this study, we have compared 4 explaning ai methods according to a group of metrics that we will define in the second part of this project.
-Each folder contains an implementation of a method explaining a prediction of an image in the data folder. The model used is VGG19. 
+### Summary
+This is the code of a practical study "A Comparative Study of Neural Network Explanation Methods" realized in 2023/2024 by four INSA students. During this study,  we have created a web application explaining what machine learning classifiers (models) are doing under the hood of a prediction.
+allowing the comparison of 4 XAI methods upon a a group of metrics. This application is meant to accelerate the process of choosing the right explanation method for a certain CNN model.  You can for example import some images from the [COCO dataset](https://cocodataset.org/) and see how close the explanation of a prediction is to the real zone of interest of the image. 
+The work done heare is intended to be extended, adding models, methods and other insights can be done easily in the back-end and front-end.
 
-## TODO :
- - [x] Faire fonctionner ce git
- - [x] Utiliser vgg19 pour tout le monde 
- - [x] Utiliser les mêmes images 
- - [ ] Creer des packages ou projet poetry pour chaque méthode 
- - [ ] 
+### Dependencies 
 
-# Grad-Cam
-The Grad-Cam method part is managed by Yorick.
-This section will regroup a synthesis of what I've done so far, and some explanations on how to use the code for my part.
-Credits to [Stepan Ulyanin](https://medium.com/@stepanulyanin/implementing-grad-cam-in-pytorch-ea0937c31e82) for the Grad-Cam implementation. 
+### Tutorial 
+1. Clone project
+2. Install all dependencies with pip
+3. install coco dataset in the right folder and follow these instructions
+4. You can now start the server with python3 manage.py runserver
+5. On the opened webpage, you can start a new experiment
 
-## My part summarised :
+### Experimenting 
+1. Configure your experiment by chosing a model, a group of image, the explanation methods you want to compare and click start
+2. You will be able to see all images being processed and clicking an image will open its comparison page where you can check all explanation from different methods.
+3. you can save the link to the explanation and come back later or share it with others. 
 
- - [x] Read the Grad-Cam article
- - [x] Try to get implemented code for Grad-Cam in python
- - [x] Run the code and **correct** errors
- - [x] Customise the code and make it work with multiple images
- - [x] Create a **working** poetry-ready folder
- - [ ] Find comparison points between each algorithm
- - [ ] Compare each algorithm
- - [ ] *(maybe)* Implement a way to switch between CNNs to add more comparison
-
-## How to use the code
-
- - With **GitHub** (you need to install all the dependencies **by yourself**) :
-
-Get the [grad-cam folder](https://github.com/LarveTable/etude-pratique-CNNs/tree/21a1fdaff7529f685fdb3f1e3cab8b9a136c9b0b/grad-cam) from the **main** branch
-
-The principal script is `predict_batch.py`, launching this script will try to fetch images in the `data/images` folder, rename and sort them with the script `rename_all_files.py`, then call the script `vgg19_gradcam.py` with each found image.
-
-The `vgg19_gradcam.py` script will apply the **VGG19** model to the image to get a likely prediction and then **pull the gradients** to **generate a heatmap** that will be superimposed on the image. The last step will be to generate a text file that contains **all the predictions** associated with their image.
-
- If you want to **try it with your own images**, just add them in the *images* folder. 
- You are also able to **delete every files** in the `data/images` and `results` folders using the script `reset_all_files.py`.
-
-- With **Poetry** :
-
-Check that you have **poetry installed** on your system.
-
-Get the [grad-cam folder](https://github.com/LarveTable/etude-pratique-CNNs/tree/21a1fdaff7529f685fdb3f1e3cab8b9a136c9b0b/grad-cam) from the **main** branch
-
-Put the forlder wherever you want and open it with the terminal. Run `poetry install`, it will install all the required dependencies into the poetry virtual environment. If everything went well, you can now run `poetry run python3 grad-cam/predict_batch.py` and see the results.
-
-**WIP**
-
-# SHAP
-The Grad-Cam method part is managed by Sulaymane.
-
-## My part summarised :
- - [x] Read the SHAP article
- - [x] Try to run SHAP examples 
- - [x] Use shap with vgg16
- - [x] Change code to use it with vgg19
- - [x] Use shap with vgg19 -> Error : kernel keeps dying for no reason :/ -> fixed (reducing the nsample 
- - [ ] Make the VGG19 work, not in notebook but within a poetry project
- - [ ] Select images remotely fetching from the imagenet database 
-
-## How to use the code
-
-# Integrated Gradient 
-The Grad-Cam method part is managed by Sulaymane.
-
-## My part summarised :
-
- - [x] Read the SHAP article
- - [x] Try to get implemented code for Grad-Cam in python
- - [x] Run the code and **correct** errors
- - [x] Customise the code and make it work with multiple images
- - [ ] Create a **working** package with poetry
- - [ ] Find comparison points between each algorithm
- - [ ] Compare each algorithm
- - [ ] *(maybe)* Implement a way to switch between CNNs to add more comparison
-
-## How to use the code
-
-# LIME 
-The LIME part is managed by Adèle.
-
-## My part summarised :
-
- - [x] Do some research on neural networks
- - [x] Read the LIME article
- - [x] Get implemented codes on github
- - [x] Test the code, correct it
- - [x] Try it with some images
- - [x] Understand the code
- - [x] Try again with different neural networks : VGG19
-
-## How to use the code
+### Credits & references
+[Stepan Ulyanin](https://medium.com/@stepanulyanin/implementing-grad-cam-in-pytorch-ea0937c31e82) 
+[Grad-CAM](https://arxiv.org/pdf/1610.02391.pdf)
+[SHAP](https://github.com/shap/shap)
+[LIME](https://github.com/marcotcr/lime)
+[Integrated Gradients](https://github.com/ankurtaly/Integrated-Gradients)
