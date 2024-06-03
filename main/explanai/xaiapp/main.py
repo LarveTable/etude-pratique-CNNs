@@ -127,31 +127,10 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
-                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                             
-                            # Obtenez ou créez les instances de CocoCategories
-                            coco_categories_instances = []
-                            for name in coco_categories:
-                                category, _ = CocoCategories.objects.get_or_create(name=name)
-                                coco_categories_instances.append(category)
-
-                            ex_res = experiment.explanationresult_set.create(experiment=experiment, neural_network=nn, date=date, pred_top1=pred_top1)
-                            for method_name in xai_methods:
-                                ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
-                            ex_res.save()
-
-                            filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
-                            output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
-                            mask = numpy_array_to_django_file(mask, dataset_path+"/out")
-                            coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
-
-                            res = ex_res.result_set.create(explanation_results=ex_res ,elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
-                                                           result_intersect=result_intersect, use_coco=use_coco, 
-                                                           method=ExplanationMethod.objects.get(name=method), final=output_image, mask=mask, 
-                                                           filtered=filtered_image, coco_masks=coco_masks, intput_image=iimg)
-                            res.coco_categories.set(coco_categories_instances)
-                            res.save()
+                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
+                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                                        mask, coco_masks, iimg, dataset_path, method)
 
                             #retrieve elapsed time from db
                             #elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
@@ -167,8 +146,11 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
-                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
+                            
+                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
+                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                                        mask, coco_masks, iimg, dataset_path, method)
+                            
                         case 'shap':
                             #todo
                             #cv2.imwrite(image_directory+'/'+file_name, output_image) 
@@ -184,13 +166,15 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
-                            explanation.save_result(method, output_image, mask, filtered_image, time_elapsed, pred_top1, 
-                                                    preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
+                            
+                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
+                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                                        mask, coco_masks, iimg, dataset_path, method)
+                            
                         case _:
                             print("Error : method not found.")
                             return
             iimg.status = "finished"
-            print("finished : ", str(iimg.image))
             iimg.save()
         
         experiment.status = "finished"
@@ -213,6 +197,32 @@ def write_to_file(directory, file_name, content):
 def delete_directory(directory):
     shutil.rmtree(directory)
 
+def save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
+                 result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                 mask, coco_masks, iimg, dataset_path, method):
+    # Obtenez ou créez les instances de CocoCategories
+    coco_categories_instances = []
+    for name in coco_categories:
+        category, _ = CocoCategories.objects.get_or_create(name=name)
+        coco_categories_instances.append(category)
+
+    ex_res = experiment.explanationresult_set.create(experiment=experiment, neural_network=nn, date=date, pred_top1=pred_top1)
+    for method_name in xai_methods:
+        ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
+    ex_res.save()
+
+    filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
+    output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
+    mask = numpy_array_to_django_file(mask, dataset_path+"/out")
+    coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
+
+    res = ex_res.result_set.create(explanation_results=ex_res ,elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
+                                    result_intersect=result_intersect, use_coco=use_coco, 
+                                    method=ExplanationMethod.objects.get(name=method), final=output_image, mask=mask, 
+                                    filtered=filtered_image, coco_masks=coco_masks, intput_image=iimg)
+    res.coco_categories.set(coco_categories_instances)
+    res.save()
+
 def numpy_array_to_django_file(image_array, save_dir):
     """
     Convert a NumPy array representing an image to a Django File object.
@@ -230,7 +240,6 @@ def numpy_array_to_django_file(image_array, save_dir):
 
     # Ensure the NumPy array is of type uint8 and values are in the range 0-255
     if image_array.dtype != np.uint8:
-        print("converted to uint8")
         image_array = image_array.astype(np.uint8)
     if image_array.max() > 255 or image_array.min() < 0:
         image_array = np.clip(image_array, 0, 255)
@@ -270,3 +279,4 @@ if __name__ == "__main__":
     #cv2.imshow('filtered', filter)
     #cv2.waitKey(0)
     #print(exp.results['lime'][90003]['result_intersect'])
+
