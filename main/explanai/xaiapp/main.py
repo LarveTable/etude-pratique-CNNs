@@ -3,7 +3,7 @@ from utils.image_processing import process_dataset, process_one
 from methods.gradcam.vgg19_gradcam import gradcam_process
 import cv2
 import os
-from tqdm import tqdm
+#from tqdm import tqdm
 from methods.LIME.VGG19_LIME import lime_process
 import matplotlib.pyplot as plt
 from methods.Integrated_Gradients.ig import ig_process
@@ -75,8 +75,6 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                     
             explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
 
-            # get experiment at this id
-            experiment = get_object_or_404(Experiment, pk=expe_id)
             # get configuration 
             config = experiment.config
 

@@ -4,7 +4,7 @@ import json
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
-from .models import Config, InImage, Experiment,ExplanationMethod
+from .models import Config, InImage, Experiment,ExplanationMethod, ExplanationResult
 
 import threading
 
@@ -57,7 +57,6 @@ def experiments(request):
 
         # New experiment
         new_expe_object = Experiment.objects.create(config=new_config_object, status="created")
-        print(new_config_object.methods)
         new_expe_object.save()
 
         # Redirect to result/expeID
@@ -93,29 +92,39 @@ def experiments_list(request):
 # in the experiment, 
 def image_result(request, experiment_id, image_id):
     result={}
-    experiment = get_object_or_404(Experiment, pk=experiment_id)
-    in_image=get_object_or_404(InImage, pk=image_id)
-    lime_image=get_object_or_404(InImage, pk=10)
-    gradcam_image=get_object_or_404(InImage, pk=12)
-    integrated_image=get_object_or_404(InImage, pk=20)
-    masked_image=get_object_or_404(InImage, pk=2)
-    mask_image=get_object_or_404(InImage, pk=2)
-    
-    gradcam_mask=get_object_or_404(InImage, pk=19)
-    coco_mask=get_object_or_404(InImage, pk=13)
 
-    lime_mask=get_object_or_404(InImage, pk=17)
-    integrated_mask=get_object_or_404(InImage, pk=18)
+    # get experiment
+    experiment = get_object_or_404(Experiment, pk=experiment_id)
+
+    explanation_result = get_object_or_404(ExplanationResult, experiment=experiment)
+
+    # get input image
+    in_image=get_object_or_404(InImage, pk=image_id)
+
+    # if lime : get lime image
+    lime_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="lime"),in_image=in_image)
+    lime_image=lime_result.final
+    lime_mask=lime_result.mask
+
+    # if gradcam : get gradcam image
+    gradcam_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="gradcam"),in_image=in_image)
+    gradcam_image=gradcam_result.final
+    gradcam_mask=gradcam_result.mask
+
+    #if IG : get IG image
+    integrated_result=explanation_result.results().filter(method=ExplanationMethod.objects.get(name="integrated_gradients"),in_image=in_image)
+    integrated_image=integrated_result.final
+    integrated_mask=integrated_result.mask
+
+    # if COCO : get Coco masks 
+    coco_mask=explanation_result.coco_mask
 
     if in_image.status == "finished":
-        #result = in_image.result_set.first()
-        #result_data={"explanation_data":{"pred1":result.pred_top1}}
-        #result_data["methods_data"] = [{"method_name":}]
         result={"lime_image":lime_image,
                 "integrated_image":integrated_image,
                 "gradcam_image":gradcam_image,
-                "mask_image":mask_image,
-                "masked_image":masked_image,
+                #"mask_image":mask_image,
+                #"masked_image":masked_image,
                 "coco_mask":coco_mask,
                 "gradcam_mask":gradcam_mask,
                 "integrated_mask":integrated_mask,
@@ -126,25 +135,22 @@ def image_result(request, experiment_id, image_id):
         
     return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id})
 
-# process each inimage and put its out image 
+# process each inimage according to config
 def process_experiment(experiment_id):
-    '''
     # get experiment at this id
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     # get configuration 
     config = experiment.config
-    # parameters fo furute implementation
+    # parameters fo future implementation
     parameters = {m.name :{} for m in list(config.methods.all())}
     # get all method of this configuration
     methods=[m.name for m in list(config.methods.all())]
 
-    print("Model name ", config.model_name)
     exp = run_comparison(methods, [config.model_name], parameters, experiment_id, True, ['dog'])
-
     # All results in exp object
     print(exp.results)
-    '''
-    
+
+    ''' fake process for demo
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config = experiment.config
     for iimg in config.inimage_set.all():
@@ -154,8 +160,10 @@ def process_experiment(experiment_id):
         iimg.save()
     experiment.status = "finished"
     experiment.save()
+    '''
 
 # Update the experiment data : images and experiment status
+# todo : restructure data : image->time,status; all-time, min..., status
 def get_experiment_update(request, experiment_id):
     experiment = get_object_or_404(Experiment, pk=experiment_id)
     config=experiment.config
