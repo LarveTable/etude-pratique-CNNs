@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.utils import timezone
 
@@ -38,6 +39,8 @@ class InImage(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
     status = models.CharField(max_length=200,default="pending")
     image = models.ImageField(null=False, blank=False, upload_to="input_images/")
+    def __str__(self) -> str:
+        os.path.basename(str(self.image))
 
 # A config that's been executed containing results with images
 class Experiment(models.Model):
