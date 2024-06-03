@@ -1,0 +1,65 @@
+{% extends "xaiapp/base.html" %}
+{% block title %}Experiments{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Vertical Menu -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#installation">
+                            Installation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tutorial">
+                            Tutorial
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#images">
+                            Images
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Installation Section -->
+            <section id="installation" class="my-4">
+                <h2>Installation</h2>
+                <p>Instructions on how to install the application.</p>
+                <pre><code>pip install your-package-name</code></pre>
+            </section>
+
+            <!-- Tutorial Section -->
+            <section id="tutorial" class="my-4">
+                <h2>Tutorial</h2>
+                <p>A simple tutorial on how to use the application.</p>
+                <pre><code>
+# Example code
+import your_package
+
+def main():
+    # Your code here
+    pass
+
+if __name__ == "__main__":
+    main()
+                </code></pre>
+            </section>
+
+            <!-- Images Section -->
+            <section id="images" class="my-4">
+                <h2>Images</h2>
+                <p>Place for images related to the tutorial.</p>
+                <img src="path/to/your/image1.jpg" class="img-fluid" alt="Example Image 1">
+                <img src="path/to/your/image2.jpg" class="img-fluid" alt="Example Image 2">
+            </section>
+        </main>
+    </div>
+</div>
+{% endblock %}

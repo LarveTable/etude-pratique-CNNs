@@ -180,3 +180,7 @@ def get_experiment_update(request, experiment_id):
     response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
     response['Cache-Control'] = 'no-cache'
     return response
+
+
+def documentation(request):
+    return render(request, "xaiapp/documentation.html")
