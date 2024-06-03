@@ -9,6 +9,7 @@ from django.conf import settings
 # > Connect a specific path to a view
 urlpatterns = [
     path("experiments/",views.experiments, name="experiments"),
+    path("doc/",views.documentation, name="documentation"),
     path("",views.home, name="home"),
     path("result/",views.experiments_list, name="experiments_list"),
     path("result/<int:experiment_id>/",views.result, name="result"),

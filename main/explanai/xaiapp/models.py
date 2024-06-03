@@ -47,17 +47,23 @@ class ExplanationResult(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     methods = models.ManyToManyField(ExplanationMethod)
     neural_network = models.CharField(max_length=50)
-    date = models.DateField() 
+    date = models.DateField()
+    pred_top1 = models.CharField(null=True, blank=True,max_length=50)
 
 # Result for one image
 class Result(models.Model):
     explanation_results = models.ForeignKey(ExplanationResult, null=True, blank=True, on_delete=models.CASCADE)
+    intput_image = models.ForeignKey(InImage, null=True, blank=True, on_delete=models.CASCADE)
     elapsed_time = models.FloatField(null=True, blank=True, default=0)
-    pred_top1 = models.CharField(null=True, blank=True, max_length=50)
     second_pass_pred = models.CharField(null=True, blank=True,max_length=50)
     result_intersect = models.JSONField(null=True, blank=True)
     use_coco = models.BooleanField(null=False, blank=False, default=False)
     coco_categories = models.ManyToManyField(CocoCategories)
+    method = models.ForeignKey(ExplanationMethod, null=True, blank=True, on_delete=models.CASCADE)
+    final = models.ImageField(null=True, blank=False, upload_to="output_images/final")
+    mask = models.ImageField(null=True, blank=False, upload_to="output_images/mask")
+    filtered = models.ImageField(null=True, blank=False, upload_to="output_images/filtered")
+    coco_masks = models.ImageField(null=True, blank=False, upload_to="output_images/coco_masks")
 
 # Output image
 class OutImage(models.Model):

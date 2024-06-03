@@ -23,13 +23,13 @@
       <div class="col">
         <h3>Informations</h3>
         <p>
-          Total time: 124s <br>
+          Total time: <span id="total-time">0s</span> <br>
           {% for mth_name in methods%}
-            Time for {{mth_name}}: 34s <br>
+            Time for {{mth_name}}: <span id="{{mth_name}}-time">0s</span><br>
           {%endfor%}
-          Mean Time for one image: 42s <br>
-          Max Time: 68s
-          Min Time: 9s
+          Mean Time for one image: <span id="mean-time">0s</span> <br>
+          Max Time: <span id="max-time">0s</span> 
+          Min Time: <span id="min-time">0s</span>
         </p>
       </div>
     </div>
@@ -83,18 +83,14 @@
     // Change border according to status
     const imagesStatus = data.status;
     imagesStatus.forEach(imgS => {
-      console.log(imgS);
       const imgCard = document.getElementById(imgS.imgName)
       const imgStatus = imgS.status;
-      console.log(imgStatus);
       switch (imgStatus) {
         case "finished":
           // Change border to green
           updateClass(imgS.imgName, "border-warning", "border-success");
-
           // Add link to image 
           let imgLink = document.getElementById("link-"+imgS.imgName);
-          console.log(imgS.imgName)
           // Check if the element exists
           if (imgLink) {
               // Modify the href attribute
@@ -102,6 +98,8 @@
           }
           break;
       }
+      //const times = data.times;
+
     });
     // If the experiment is done : close the updates
     if ("{{experiment_status}}" == "finished") {

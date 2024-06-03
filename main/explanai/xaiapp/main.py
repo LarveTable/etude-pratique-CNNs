@@ -75,8 +75,6 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                     
             explanation = Explanation(int(time_now*rand_int), xai_methods, nn, parameters)
 
-            # get experiment at this id
-            experiment = get_object_or_404(Experiment, pk=expe_id)
             # get configuration 
             config = experiment.config
 
@@ -138,23 +136,22 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                                 category, _ = CocoCategories.objects.get_or_create(name=name)
                                 coco_categories_instances.append(category)
 
-                            ex_res = experiment.explanationresult_set.create(neural_network=nn, date=date)
+                            ex_res = experiment.explanationresult_set.create(neural_network=nn, date=date, pred_top1=pred_top1)
                             for method_name in xai_methods:
                                 ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
                             ex_res.save()
-
-                            res = ex_res.result_set.create(elapsed_time=time_elapsed, pred_top1=pred_top1, second_pass_pred=second_pass_pred, result_intersect=result_intersect, use_coco=use_coco)
-                            res.coco_categories.set(coco_categories_instances)
-                            res.save()
 
                             filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
                             output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
                             mask = numpy_array_to_django_file(mask, dataset_path+"/out")
                             coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
 
-                            method_instance = ExplanationMethod.objects.get(name=method)
-                            out_img = res.outimage_set.create(method=method_instance, final=output_image, mask=mask, filtered=filtered_image, coco_masks=coco_masks)
-                            out_img.save()
+                            res = ex_res.result_set.create(elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
+                                                           result_intersect=result_intersect, use_coco=use_coco, 
+                                                           method=ExplanationMethod.objects.get(name=method), final=output_image, mask=mask, 
+                                                           filtered=filtered_image, coco_masks=coco_masks, intput_image=iimg)
+                            res.coco_categories.set(coco_categories_instances)
+                            res.save()
 
                             #retrieve elapsed time from db
                             #elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
