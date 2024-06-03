@@ -1,9 +1,10 @@
-# Explainable AI comparison app
+# Explainable AI: A Comparison Web Application
 By Adèle, Sulaymane, Taha, Yorick.
 
 ### Summary
-This is the code of a practical study "A Comparative Study of Neural Network Explanation Methods" realized in 2023/2024 by four INSA students. During this study,  we have created a web application explaining what machine learning classifiers (models) are doing under the hood of a prediction.
-allowing the comparison of 4 XAI methods upon a a group of metrics. This application is meant to accelerate the process of choosing the right explanation method for a certain CNN model.  You can for example import some images from the [COCO dataset](https://cocodataset.org/) and see how close the explanation of a prediction is to the real zone of interest of the image. 
+This is the code of a practical study "A Comparative Study of Neural Network Explanation Methods" realized in 2023/2024 by four INSA students. During this study,  we have created a web application explaining what machine learning classifiers (models) are doing under the hood of a prediction. It allows you to compare XAI methods upon a a group of metrics. 
+
+This application is meant to accelerate the process of choosing the right explanation method for a certain CNN model.  You can for example import some images from the [COCO dataset](https://cocodataset.org/) and see how close the explanation of a prediction is to the real zone of interest of the image. 
 The work done heare is intended to be extended, adding models, methods and other insights can be done easily in the back-end and front-end.
 
 ### Dependencies 
