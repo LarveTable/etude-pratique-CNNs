@@ -108,6 +108,17 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                         directories_check([preds_directory])
                         write_to_file(preds_directory, file_name_without_extension+'_top1.txt', pred_top1)
                         write_to_file(preds_directory, file_name_without_extension+'_top5.txt', preds_top5)
+                
+                # Create explanation result
+                coco_categories_instances = []
+                for name in coco_categories:
+                    category, _ = CocoCategories.objects.get_or_create(name=name)
+                    coco_categories_instances.append(category)
+
+                ex_res = experiment.explanationresult_set.create(experiment=experiment, neural_network=nn, date=date, pred_top1=pred_top1)
+                for method_name in xai_methods:
+                    ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
+                ex_res.save()
 
                 for method in xai_methods:
 
@@ -128,8 +139,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
                             
-                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
-                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                            save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
+                                         result_intersect, use_coco, filtered_image, output_image, 
                                         mask, coco_masks, iimg, dataset_path, method)
 
                             #retrieve elapsed time from db
@@ -147,8 +158,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             
-                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
-                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                            save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
+                                         result_intersect, use_coco, filtered_image, output_image, 
                                         mask, coco_masks, iimg, dataset_path, method)
                             
                         case 'shap':
@@ -167,8 +178,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             
-                            save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
-                                        result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+                            save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
+                                         result_intersect, use_coco, filtered_image, output_image, 
                                         mask, coco_masks, iimg, dataset_path, method)
                             
                         case _:
@@ -197,30 +208,20 @@ def write_to_file(directory, file_name, content):
 def delete_directory(directory):
     shutil.rmtree(directory)
 
-def save_results(experiment, nn, date, pred_top1, xai_methods, time_elapsed, second_pass_pred, 
-                 result_intersect, use_coco, coco_categories, filtered_image, output_image, 
+def save_results(explanation_result, coco_cat_i, time_elapsed, second_pass_pred, 
+                 result_intersect, use_coco, filtered_image, output_image, 
                  mask, coco_masks, iimg, dataset_path, method):
-    # Obtenez ou créez les instances de CocoCategories
-    coco_categories_instances = []
-    for name in coco_categories:
-        category, _ = CocoCategories.objects.get_or_create(name=name)
-        coco_categories_instances.append(category)
-
-    ex_res = experiment.explanationresult_set.create(experiment=experiment, neural_network=nn, date=date, pred_top1=pred_top1)
-    for method_name in xai_methods:
-        ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
-    ex_res.save()
 
     filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
     output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
     mask = numpy_array_to_django_file(mask, dataset_path+"/out")
     coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
 
-    res = ex_res.result_set.create(explanation_results=ex_res ,elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
+    res = explanation_result.result_set.create(explanation_results=explanation_result ,elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
                                     result_intersect=result_intersect, use_coco=use_coco, 
                                     method=ExplanationMethod.objects.get(name=method), final=output_image, mask=mask, 
                                     filtered=filtered_image, coco_masks=coco_masks, intput_image=iimg)
-    res.coco_categories.set(coco_categories_instances)
+    res.coco_categories.set(coco_cat_i)
     res.save()
 
 def numpy_array_to_django_file(image_array, save_dir):
