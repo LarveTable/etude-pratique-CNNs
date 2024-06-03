@@ -92,11 +92,22 @@ def experiments_list(request):
 # in the experiment, 
 def image_result(request, experiment_id, image_id):
     result={}
+    lime_image=None
+    lime_mask=None
+    lime_time=0
+    integrated_image=None
+    integrated_mask=None
+    integrated_time=0
+    gradcam_image=None
+    gradcam_mask=None
+    gradcam_time=0
 
     # get experiment
     experiment = get_object_or_404(Experiment, pk=experiment_id)
 
     explanation_result = get_object_or_404(ExplanationResult, experiment=experiment)
+    methods=[m.name for m in list(explanation_result.methods.all())]
+    print(methods)
 
     # get input image
     in_image=get_object_or_404(InImage, pk=image_id)
@@ -104,23 +115,26 @@ def image_result(request, experiment_id, image_id):
     # if lime : get lime image
     lime_m = ExplanationMethod.objects.get(name='lime')
     lime_result=Result.objects.get(intput_image=in_image, method=lime_m)
-    lime_image=lime_result.final
-    lime_mask=lime_result.mask
-    lime_time=round(lime_result.elapsed_time,3)
+    if lime_result:
+        lime_image=lime_result.final
+        lime_mask=lime_result.mask
+        lime_time=round(lime_result.elapsed_time,3)
 
     # if gradcam : get gradcam image
-    gradcam_m = get_object_or_404(ExplanationMethod, name="gradcam")
-    gradcam_result=Result.objects.get(intput_image=in_image, method=gradcam_m)
-    gradcam_image=gradcam_result.final
-    gradcam_mask=gradcam_result.mask
-    gradcam_time=round(gradcam_result.elapsed_time,3)
+    if "gradcam" in methods:
+        gradcam_m = get_object_or_404(ExplanationMethod, name="gradcam")
+        gradcam_result=Result.objects.get(intput_image=in_image, method=gradcam_m)
+        gradcam_image=gradcam_result.final
+        gradcam_mask=gradcam_result.mask
+        gradcam_time=round(gradcam_result.elapsed_time,3)
 
     #if IG : get IG image
-    integrated_m = get_object_or_404(ExplanationMethod, name="integrated_gradients")
-    integrated_result=Result.objects.get(intput_image=in_image, method=integrated_m)
-    integrated_image=integrated_result.final
-    integrated_mask=integrated_result.mask
-    integrated_time=round(integrated_result.elapsed_time,3)
+    if "integrated_gradients" in methods:
+        integrated_m = get_object_or_404(ExplanationMethod, name="integrated_gradients")
+        integrated_result=Result.objects.get(intput_image=in_image, method=integrated_m)
+        integrated_image=integrated_result.final
+        integrated_mask=integrated_result.mask
+        integrated_time=round(integrated_result.elapsed_time,3)
 
     # if COCO : get Coco masks 
     if gradcam_result:
