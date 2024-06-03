@@ -92,12 +92,20 @@ def experiments_list(request):
 # in the experiment, 
 def image_result(request, experiment_id, image_id):
     result={}
+    lime_m=None
+    lime_result=None
     lime_image=None
     lime_mask=None
     lime_time=0
+
+    integrated_result=None
+    integrated_m=None
     integrated_image=None
     integrated_mask=None
     integrated_time=0
+
+    gradcam_m=None
+    gradcam_result=None
     gradcam_image=None
     gradcam_mask=None
     gradcam_time=0
@@ -112,15 +120,13 @@ def image_result(request, experiment_id, image_id):
     # get input image
     in_image=get_object_or_404(InImage, pk=image_id)
 
-    # if lime : get lime image
-    lime_m = ExplanationMethod.objects.get(name='lime')
-    lime_result=Result.objects.get(intput_image=in_image, method=lime_m)
-    if lime_result:
+    if "lime" in methods:
+        lime_m = ExplanationMethod.objects.get(name='lime')
+        lime_result=Result.objects.get(intput_image=in_image, method=lime_m)
         lime_image=lime_result.final
         lime_mask=lime_result.mask
         lime_time=round(lime_result.elapsed_time,3)
 
-    # if gradcam : get gradcam image
     if "gradcam" in methods:
         gradcam_m = get_object_or_404(ExplanationMethod, name="gradcam")
         gradcam_result=Result.objects.get(intput_image=in_image, method=gradcam_m)
@@ -128,7 +134,6 @@ def image_result(request, experiment_id, image_id):
         gradcam_mask=gradcam_result.mask
         gradcam_time=round(gradcam_result.elapsed_time,3)
 
-    #if IG : get IG image
     if "integrated_gradients" in methods:
         integrated_m = get_object_or_404(ExplanationMethod, name="integrated_gradients")
         integrated_result=Result.objects.get(intput_image=in_image, method=integrated_m)
