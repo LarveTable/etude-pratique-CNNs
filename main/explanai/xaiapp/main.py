@@ -185,8 +185,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                         case _:
                             print("Error : method not found.")
                             return
-            iimg.status = "finished"
-            iimg.save()
+                iimg.status = "finished"
+                iimg.save()
         
         experiment.status = "finished"
         experiment.save()

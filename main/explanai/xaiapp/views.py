@@ -81,6 +81,10 @@ def result(request, experiment_id):
         thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
         thread1.start()
     
+    if experiment.status == "pending":
+        thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
+        thread1.start()
+    
     return render(request, "xaiapp/results.html", {"config_data":config, "in_images":images, "experiment_id":experiment_id, "experiment_status":experiment.status, "methods":methods})
 
 # display all available experiments 1st image, a link too the result page
