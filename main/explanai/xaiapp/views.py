@@ -116,12 +116,14 @@ def image_result(request, experiment_id, image_id):
     # get experiment
     experiment = get_object_or_404(Experiment, pk=experiment_id)
 
-    explanation_result = get_object_or_404(ExplanationResult, experiment=experiment)
-    methods=[m.name for m in list(explanation_result.methods.all())]
-    print(methods)
-
-    # get input image
+    # get input image 
     in_image=get_object_or_404(InImage, pk=image_id)
+
+    # get explanation result 
+    explanation_result = get_object_or_404(ExplanationResult, experiment=experiment, intput_image=in_image)
+
+    # get all methods used for this image
+    methods=[m.name for m in list(explanation_result.methods.all())]
 
     if "lime" in methods:
         lime_m = ExplanationMethod.objects.get(name='lime')
@@ -151,6 +153,7 @@ def image_result(request, experiment_id, image_id):
     if gradcam_result:
         coco_mask=gradcam_result.coco_masks
 
+    print(str(in_image))   
     total_time=round(lime_time + gradcam_time + integrated_time)
     if in_image.status == "finished":
         result={
@@ -170,9 +173,9 @@ def image_result(request, experiment_id, image_id):
                 "lime_intersect":lime_intersect,
                 "integrated_intersect":integrated_intersect,
                 }
-        return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
+        return render(request, "xaiapp/image_result.html", {"in_image":in_image, "img_name":str(in_image), "experiment_id":experiment_id, "result":result})
         
-    return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id})
+    return render(request, "xaiapp/image_result.html", {"in_image":in_image, "img_name":str(in_image), "experiment_id":experiment_id})
 
 # process each inimage according to config
 def process_experiment(experiment_id):

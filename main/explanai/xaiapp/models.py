@@ -40,7 +40,11 @@ class InImage(models.Model):
     status = models.CharField(max_length=200,default="pending")
     image = models.ImageField(null=False, blank=False, upload_to="input_images/")
     def __str__(self) -> str:
-        os.path.basename(str(self.image))
+        file_name = os.path.basename(str(self.image.url))
+        file_name_without_extension = file_name.rsplit('_', 1)[0] # get rid of the string added by django
+        # get the file name without the extension
+        file_name_without_extension = os.path.splitext(file_name)[0]
+        return file_name_without_extension
 
 # A config that's been executed containing results with images
 class Experiment(models.Model):
@@ -53,6 +57,7 @@ class Experiment(models.Model):
 
 class ExplanationResult(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+    intput_image = models.ForeignKey(InImage, null=True, blank=True, on_delete=models.CASCADE)
     methods = models.ManyToManyField(ExplanationMethod)
     neural_network = models.CharField(max_length=50)
     date = models.DateField()

@@ -115,7 +115,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                     category, _ = CocoCategories.objects.get_or_create(name=name)
                     coco_categories_instances.append(category)
 
-                ex_res = experiment.explanationresult_set.create(experiment=experiment, neural_network=nn, date=date, pred_top1=pred_top1)
+                ex_res = experiment.explanationresult_set.create(experiment=experiment, intput_image=iimg, neural_network=nn, date=date, pred_top1=pred_top1)
                 for method_name in xai_methods:
                     ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
                 ex_res.save()
