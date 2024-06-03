@@ -92,6 +92,7 @@ def experiments_list(request):
 # in the experiment, 
 def image_result(request, experiment_id, image_id):
     result={}
+    gradcam_m = get_object_or_404(ExplanationMethod, name="gradcam")
 
     # get experiment
     experiment = get_object_or_404(Experiment, pk=experiment_id)
@@ -102,19 +103,21 @@ def image_result(request, experiment_id, image_id):
     in_image=get_object_or_404(InImage, pk=image_id)
 
     # if lime : get lime image
-    lime_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="lime"),in_image=in_image)
-    lime_image=lime_result.final
-    lime_mask=lime_result.mask
+    # lime_m = ExplanationMethod.objects.get(name='lime')
+    # lime_result=Result.objects.get(intput_image=in_image, method=lime_m)
+    # lime_image=lime_result.final
+    # lime_mask=lime_result.mask
 
     # if gradcam : get gradcam image
-    gradcam_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="gradcam"),in_image=in_image)
+    gradcam_result=Result.objects.get(intput_image=in_image, method=gradcam_m)
     gradcam_image=gradcam_result.final
     gradcam_mask=gradcam_result.mask
 
     #if IG : get IG image
-    integrated_result=explanation_result.results.all().filter(method=ExplanationMethod.objects.get(name="integrated_gradients"),in_image=in_image)
-    integrated_image=integrated_result.final
-    integrated_mask=integrated_result.mask
+    # integrated_m = get_object_or_404(ExplanationMethod, pk="integrated_gradients")
+    # integrated_result=Result.objects.get(intput_image=in_image, method=integrated_m)
+    # integrated_image=integrated_result.final
+    # integrated_mask=integrated_result.mask
 
     # if COCO : get Coco masks 
     coco_mask=explanation_result.coco_mask
@@ -129,7 +132,7 @@ def image_result(request, experiment_id, image_id):
                 "gradcam_mask":gradcam_mask,
                 "integrated_mask":integrated_mask,
                 "lime_mask":lime_mask,
-                "prediction":"Appenzeller",
+                "prediction":explanation_result.pred_top1,
                 }
         return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
         
