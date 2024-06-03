@@ -42,6 +42,10 @@ class InImage(models.Model):
 class Experiment(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
     status = models.CharField(max_length=200, default="created")
+    creation_date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.creation_date.strftime('%Y-%m-%d %H:%M:%S')
+
 
 class ExplanationResult(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)

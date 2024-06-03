@@ -85,7 +85,7 @@ def result(request, experiment_id):
 
 # display all available experiments 1st image, a link too the result page
 def experiments_list(request):
-    expe_list = [{"id":e.id, "img1":e.config.inimage_set.first()} for e in Experiment.objects.all()]
+    expe_list = [{"id":e.id, "img1":e.config.inimage_set.first(), "date":e.creation_date} for e in Experiment.objects.all()]
     return render(request, "xaiapp/experiments_list.html",context={"expe_list":expe_list})
 
 # Result page for an image : in image, prediction, out image for each methods 
