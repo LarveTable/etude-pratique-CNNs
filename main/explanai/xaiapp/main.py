@@ -171,7 +171,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                                                     preds_top5, second_pass_pred, result_intersect, int(id[0]), coco_masks, use_coco, coco_categories)
                         case 'shap':
                             #todo
-                            cv2.imwrite(image_directory+'/'+file_name, output_image) 
+                            #cv2.imwrite(image_directory+'/'+file_name, output_image) 
                             pass
                         case 'integrated_gradients':
                             #todo
