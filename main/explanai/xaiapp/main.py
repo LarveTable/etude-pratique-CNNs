@@ -3,7 +3,7 @@ from utils.image_processing import process_dataset, process_one
 from methods.gradcam.vgg19_gradcam import gradcam_process
 import cv2
 import os
-#from tqdm import tqdm
+from tqdm import tqdm
 from methods.LIME.VGG19_LIME import lime_process
 import matplotlib.pyplot as plt
 from methods.Integrated_Gradients.ig import ig_process
