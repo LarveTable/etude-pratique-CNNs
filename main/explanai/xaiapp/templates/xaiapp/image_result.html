@@ -12,7 +12,7 @@
   </nav>
 
   <div class="p-2 container border rounded m-2">
-    <h4>{{in_image.image}} - prediction: {{result.prediction}} - total time:{{result.total_time}}</h4>
+    <h4>{{in_image.image}} - prediction: {{result.prediction}} - total time:{{result.total_time}}s</h4>
     <img src="{{in_image.image.url}}" class="" style="width: 100%; height:100%;" alt="{{in_image.image.url}}"
       title="{{in_image.image.url}}">
   </div>
@@ -43,7 +43,7 @@
           <div class="carousel-item">
             <img src="{{result.gradcam_mask.url}}" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
-              <h3>Coco intersection: 56%</h3>
+              <h3>Coco intersection: {{result.gradcam_intersect}}%</h3>
               <p>GradCam Masked with interest zones</p>
             </div>
           </div>
@@ -96,7 +96,7 @@
           <div class="carousel-item">
             <img src="{{result.lime_mask.url}}" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
-              <h3>Coco intersection: 58%</h3>
+              <h3>Coco intersection: {{result.lime_intersect}}%</h3>
               <p>Lime Masked with interest zones</p>
             </div>
           </div>
@@ -149,7 +149,7 @@
         <div class="carousel-item">
           <img src="{{result.integrated_mask.url}}" class="d-block w-100" alt="...">
           <div class="carousel-caption d-none d-md-block">
-            <h3>Coco intersection: 82%</h3>
+            <h3>Coco intersection: {{result.integrated_intersect}}%</h3>
             <p>Integrated Gradient Masked with interest zones -> percentage : 82%</p>
           </div>
         </div>

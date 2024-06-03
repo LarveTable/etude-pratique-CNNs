@@ -97,18 +97,21 @@ def image_result(request, experiment_id, image_id):
     lime_image=None
     lime_mask=None
     lime_time=0
+    lime_intersect=0
 
     integrated_result=None
     integrated_m=None
     integrated_image=None
     integrated_mask=None
     integrated_time=0
+    integrated_intersect=0
 
     gradcam_m=None
     gradcam_result=None
     gradcam_image=None
     gradcam_mask=None
     gradcam_time=0
+    gradcam_intersect=0
 
     # get experiment
     experiment = get_object_or_404(Experiment, pk=experiment_id)
@@ -126,6 +129,7 @@ def image_result(request, experiment_id, image_id):
         lime_image=lime_result.final
         lime_mask=lime_result.mask
         lime_time=round(lime_result.elapsed_time,3)
+        lime_intersect=round(next(iter(lime_result.result_intersect.values())),2)
 
     if "gradcam" in methods:
         gradcam_m = get_object_or_404(ExplanationMethod, name="gradcam")
@@ -133,6 +137,7 @@ def image_result(request, experiment_id, image_id):
         gradcam_image=gradcam_result.final
         gradcam_mask=gradcam_result.mask
         gradcam_time=round(gradcam_result.elapsed_time,3)
+        gradcam_intersect=round(next(iter(gradcam_result.result_intersect.values())),2)
 
     if "integrated_gradients" in methods:
         integrated_m = get_object_or_404(ExplanationMethod, name="integrated_gradients")
@@ -140,6 +145,7 @@ def image_result(request, experiment_id, image_id):
         integrated_image=integrated_result.final
         integrated_mask=integrated_result.mask
         integrated_time=round(integrated_result.elapsed_time,3)
+        integrated_intersect=round(next(iter(integrated_result.result_intersect.values())),2)
 
     # if COCO : get Coco masks 
     if gradcam_result:
@@ -158,7 +164,11 @@ def image_result(request, experiment_id, image_id):
                 "prediction":explanation_result.pred_top1,
                 "gradcam_time":str(gradcam_time),
                 "lime_time":str(lime_time),
-                "integrated_time":str(integrated_time)
+                "integrated_time":str(integrated_time),
+                "total_time":total_time,
+                "gradcam_intersect":gradcam_intersect,
+                "lime_intersect":lime_intersect,
+                "integrated_intersect":integrated_intersect,
                 }
         return render(request, "xaiapp/image_result.html", {"in_image":in_image, "experiment_id":experiment_id, "result":result})
         
