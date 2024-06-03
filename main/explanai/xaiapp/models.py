@@ -48,6 +48,7 @@ class ExplanationResult(models.Model):
     methods = models.ManyToManyField(ExplanationMethod)
     neural_network = models.CharField(max_length=50)
     date = models.DateField() 
+    pred_top1 = models.CharField(max_length=50)
 
 # Result for one image
 class Result(models.Model):

@@ -136,7 +136,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                                 category, _ = CocoCategories.objects.get_or_create(name=name)
                                 coco_categories_instances.append(category)
 
-                            ex_res = experiment.explanationresult_set.create(neural_network=nn, date=date)
+                            ex_res = experiment.explanationresult_set.create(neural_network=nn, date=date, pred_top1=pred_top1)
                             for method_name in xai_methods:
                                 ex_res.methods.add(ExplanationMethod.objects.get(name=method_name))  # Utilisation de la méthode set() pour les ManyToMany
                             ex_res.save()
@@ -146,7 +146,7 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             mask = numpy_array_to_django_file(mask, dataset_path+"/out")
                             coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
 
-                            res = ex_res.result_set.create(elapsed_time=time_elapsed, pred_top1=pred_top1, second_pass_pred=second_pass_pred, 
+                            res = ex_res.result_set.create(elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
                                                            result_intersect=result_intersect, use_coco=use_coco, 
                                                            method=ExplanationMethod.objects.get(name=method), final=output_image, mask=mask, 
                                                            filtered=filtered_image, coco_masks=coco_masks, intput_image=iimg)
