@@ -205,7 +205,7 @@ def process_experiment(experiment_id):
     except Exception as e:
         experiment.status="error"
         experiment.save()
-        print(f"Error when running: {experiment.status}")
+        print(f"Error when running: {e}")
     # All results in exp object
     print(exp.results)
 
@@ -234,6 +234,7 @@ def get_experiment_update(request, experiment_id):
     def event_stream():
         while 1:
             time.sleep(1)
+            print("status:", experiment.status)
             # each image : status and if done out image
             data = { 
                 "message": "Experiment update",
