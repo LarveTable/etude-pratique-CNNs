@@ -239,22 +239,9 @@ def numpy_array_to_django_file(image_array, save_dir):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    # Ensure the NumPy array is of type uint8 and values are in the range 0-255
-    if image_array.dtype != np.uint8:
-        image_array = image_array.astype(np.uint8)
-    if image_array.max() > 255 or image_array.min() < 0:
-        image_array = np.clip(image_array, 0, 255)
-
-    # Convert the NumPy array to a PIL image
-    image_pil = Image.fromarray(image_array)
-
-    # Determine the file format based on the original image format
-    file_format = 'JPEG' if image_pil.mode in ('RGB', 'RGBA') else 'PNG'
-    suffix = '.' + file_format.lower()
-
     # Create a temporary file in the specified directory and write the image to it
-    temp_file_path = os.path.join(save_dir, next(tempfile._get_candidate_names()) + suffix)
-    image_pil.save(temp_file_path, format=file_format)
+    temp_file_path = os.path.join(save_dir, next(tempfile._get_candidate_names()) + '.jpg')
+    cv2.imwrite(temp_file_path, image_array)
 
     # Open the file and create a Django File object
     temp_file = open(temp_file_path, 'rb')
