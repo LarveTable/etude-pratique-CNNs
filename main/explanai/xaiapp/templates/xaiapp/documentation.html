@@ -8,18 +8,18 @@
             <div class="position-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#installation">
-                            Installation
+                        <a class="nav-link active" href="#experimentatio">
+                            Experimentation
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#tutorial">
-                            Tutorial
+                        <a class="nav-link" href="#faq">
+                            FAQ
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#images">
-                            Images
+                        <a class="nav-link" href="#ensavplus">
+                            En savoir plus
                         </a>
                     </li>
                 </ul>
@@ -29,18 +29,172 @@
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <!-- Installation Section -->
-            <section id="installation" class="my-4">
-                <h2>Installation</h2>
-                <p>This application is ran locally, it uses django as a backend-server framework, first you need to install the dependencies</p>
-                <h5>dependencies</h5>
-                <pre><code>pip install your-package-name</code></pre>
+            <section id="experimentation" class="my-4">
+                <h2>Experimentation</h2>
+                <p>
+                    En cliquant sur le bouton « new experiment », vous arrivez sur une nouvelle page : la page
+                    d’initialisation d’une nouvelle expérience.
+                    Pour démarrer une nouvelle expérience, il faut tout d’abord choisir le réseau de neurones qui sera
+                    utilisé pour les prédictions.
+                    Pour l’instant, le seul choix possible est VGG19. Il suffit de le sélectionner dans le bouton
+                    déroulant.
+                    Ensuite, vous devez choisir la ou les image(s) dont vous souhaitez avoir la prédiction et
+                    l’explication. Un bouton « browse files » permet de sélectionner dans vos fichiers les images de
+                    votre choix.
+                    Vous pouvez également choisir d’utiliser des images du dataset COCO. Ce dataset d’images annotées
+                    permet l’accès à des informations supplémentaires sur les performances des méthodes d’explication.
+                    Il est alors intéressant d’utiliser ces images.
+                    <br>
+                    Attention, il faut que l’utilisateur ait en mémoire que toutes les métriques de comparaison ne sont
+                    pas accessibles si celui-ci choisit d’analyser ses propres images. L’intégralité des métriques n’est
+                    disponible seulement pour les images issues du dataset COCO.
+                    Pour utiliser les images du dataset COCO, sélectionnez simplement l’option et renseignez les
+                    différents paramètres (nombre d’images, catégories, etc.)
+                    Nous utilisons les ressources de ce dataset afin de proposer des métriques de comparaison plus
+                    poussées, et ainsi permettre à l’utilisateur de faire le meilleur choix possible.
+                    <br>
+                    Une fois que vous avez sélectionné la/les image(s) de votre choix, vous pouvez ensuite sélectionner
+                    les méthodes d’XAI que vous souhaitez comparer.
+                    Pour le moment, seules trois sont disponibles : LIME, Integrated Gradients et Grad-CAM.
+                    (Nous vous conseillons d’en choisir au moins 2, sinon la comparaison ne peut pas fonctionner !)
+                    <br>
+                    Il est possible de sauvegarder cette configuration en cliquant sur le bouton “save config/load
+                    config”.
+
+
+                </p>
+                <h5>choix des métriques</h5>
+                <p>
+                    Plusieurs métriques sont proposées.
+                    - Le calcul du temps d’extraction de l’explication est disponible quelle que soit l’image.
+                    - La métrique d’intersection : calcule le pourcentage de pixels communs entre la zone mise en
+                    évidence par la méthode d’explication et la zone qui contient réellement l’objet de la prédiction.
+                    On obtient alors un score de similarité : plus ce score est élevé, plus la méthode est précise.
+
+                </p>
+                <h5>choix des métriques</h5>
+                <p>
+                    Vous arrivez alors sur une nouvelle page intitulée “Results”, qui rassemble les miniatures des
+                    images dont vous souhaitez connaître l’explication.
+                    Ces miniatures sont entourées en jaune tant que les explications ne sont pas finies : en effet,
+                    obtenir les explications demande de nombreux calculs et analyses de la part des méthodes
+                    d’explication, ce qui prend plusieurs secondes.
+                </p>
+                <img src="" alt="page de résultats" title="page de résultats">
+                <p>
+                    Cela peut prendre plusieurs secondes voire minutes par image, ne soyez donc pas étonnés d’attendre
+                    plusieurs minutes au total si vous avez sélectionné de nombreuses images.
+
+                    Lorsque le tour de la miniature d’image passe au vert, cela signifie que les explications liées à
+                    cette image sont terminées, et que les métriques sont disponibles.
+                </p>
+                <img src="" alt="image prête: les explication sont terminée">
+                <p>Vous pouvez alors cliquer sur une image pour en savoir plus.</p>
+                <h5>Obtention des résultats</h5>
+                <p>
+                    Vous arrivez ensuite sur une page déroulante, sur laquelle se succèdent les explications concernant
+                    la prédiction de l’image : vous obtenez en effet une explication par méthode que vous aviez
+                    sélectionnée.
+                    <br>
+                    Tout en haut de la page, vous retrouvez l’image originale, celle qui a été analysée par le réseau de
+                    neurones afin d’obtenir une prédiction.
+                    La première prédiction donnée par le réseau de neurones pour cette image est également affichée.
+                    <br>
+                    En bas de la page, vous retrouvez également le masque COCO associé à la prédiction : c'est-à-dire la
+                    forme de l’objet qui est le sujet de la prédiction du réseau de neurones.
+                    Par exemple, pour une image où l’on voit un chien (image provenant du dataset COCO), si le réseau de
+                    neurones prédit que cette image représente un chien, le masque COCO associé à cette prédiction est
+                    alors la zone de pixels contenant le chien (et seulement le chien).
+                </p>
+                <img src="" alt="masque coco">
+                <p>
+                    Revenons à chaque explication provenant d’une méthode d’explication : le nom de chaque méthode
+                    d’explication est indiqué en haut de chaque explication.
+                    <br>
+                    Le résultat de la métrique de temps est disponible sur la même ligne que le nom de méthode
+                    d’explication : ce résultat est donné en secondes.
+                    <br>
+                    Vous voyez ensuite sur l’image la zone mise en évidence par le réseau de neurones. Suivant la
+                    méthode utilisée, cette zone peut être une simple zone entourée, ou alors une Heatmap (« carte de
+                    chaleur », comportant des gradients de couleurs).
+                <ol>
+                    <li>
+                        Ainsi, la première photo qui vous est présentée constitue l’explication telle qu’elle est
+                        renvoyée à
+                        l’origine par la méthode d’explication.
+                    </li>
+                    <li>
+                        A droite de chaque explication, vous obtenez le masque de cette zone d’explication : la zone
+                        mise
+                        en
+                        évidence par l’explication, extraite de l’image. Cette image ressemble alors à un “découpage” de
+                        cette zone, avec seulement des pixels blancs à l'intérieur de la zone.
+                    </li>
+                    <li>
+                        Encore à droite de cette image, vous obtenez une image contenant simplement la zone mise en
+                        évidence
+                        par la méthode d’explication, mais cette fois-ci les pixels de l’image d’origine sont à
+                        l'intérieur
+                        de cette zone.
+                    </li>
+                </ol>
+                </p>
+                <img src="" alt="masque intersection">
+                <p>
+                    Le score de similarité affiché donne le pourcentage de pixels communs entre le masque de la zone
+                    d’explication et le masque COCO (présent tout en bas de la page). Plus ce score est elevé, plus la
+                    méthode est précise, car celle-ci a mis en évidence une zone très proche de la zone attendue.
+
+                    Enfin, vous pouvez enregistrer l’image (celle du 3.) qui contient le masque de la zone d’explication
+                    rempli avec l’image. En passant de nouveau cette image dans le réseau de neurones (sans faire cette
+                    fois-ci attention aux explications fournies : celles-ci ne nous intéressent pas pour cette
+                    métrique), vous obtenez la prédiction du réseau de neurones : c’est-à-dire que à partir de cette
+                    image très réduite, le réseau de neurones va essayer de déterminer ce que représente l’image.
+                    Si le réseau de neurones parvient à distinguer correctement ce que représente l’image, cela signifie
+                    que la zone qui a été mise en évidence par la méthode d’explication est suffisamment pertinente pour
+                    que l’on puisse comprendre la nature de l’objet présent dans la zone. Cela représente donc un
+                    indicateur de la pertinence de la méthode d’explication choisie.
+
+                </p>
+
+                <h5>Accès aux résultats des expériences précedentes</h5>
+                <p>
+                    Il est possible de consulter les expériences effectuées précédemment dans l’onglet “List
+                    Experiments”, présent en haut des pages.
+                    Chaque expérience possède un numéro, il est donc aisé de se repérer dans les nombreuses expériences
+                    effectuées et de revoir les résultats obtenus pour une certaine expérience. Il suffit donc de
+                    sélectionner le bon numéro d’expérience pour se retrouver sur la page “Results” de l’expérience
+                    concernée.
+
+                </p>
+                <img src="" alt="page des expériences">
+                <!-- <pre><code>pip install your-package-name</code></pre> -->
             </section>
 
             <!-- Tutorial Section -->
-            <section id="tutorial" class="my-4">
-                <h2>Tutorial</h2>
-                <p>A simple tutorial on how to use the application.</p>
-                <pre><code>
+            <section id="faq" class="my-4">
+                <h2>FAQ</h2>
+                <p>
+                    <b><i>
+                            “Pourquoi n’obtient-on pas de résultat clair nous disant quelle méthode d’explication est la
+                            meilleure ?”
+                        </i></b><br>
+                    Car cela dépend avant tout de ce que l’utilisateur recherche : certains recherchent
+                    une méthode rapide, d’autres privilégieront la précision par exemple. De plus, il ne faut pas
+                    oublier que la perception visuelle est cruciale, mais que celle-ci varie d’un individu à l’autre
+                    (quand certains trouvent les heatmaps plus précises, d’autres préfèrent lorsque les explications ont
+                    des bordures nettes) : c’est pourquoi nous laissons l’utilisateur avoir le dernier mot sur la
+                    méthode qu’il privilégiera.
+                </p>
+                <p>
+                    <i><b>
+                            « Je ne parviens pas à obtenir les valeurs de la métrique d’intersection pour l’image que je
+                            souhaite ? »
+                        </b></i> <br>
+                    Il est possible que l’image ne provienne pas du dataset COCO. Il n’est possible
+                    d’obtenir le résultat de cette métrique que pour les images du dataset COCO.
+                </p>
+                <!-- <pre><code>
 # Example code
 import your_package
 
@@ -50,15 +204,20 @@ def main():
 
 if __name__ == "__main__":
     main()
-                </code></pre>
+                </code></pre> -->
             </section>
-
-            <!-- Images Section -->
-            <section id="images" class="my-4">
-                <h2>Images</h2>
-                <p>Place for images related to the tutorial.</p>
-                <img src="path/to/your/image1.jpg" class="img-fluid" alt="Example Image 1">
-                <img src="path/to/your/image2.jpg" class="img-fluid" alt="Example Image 2">
+            <section id="ensavplus" class="my-4">
+                <h2>En savoir plus</h2>
+                <ul>
+                    <li>
+                        Pour en savoir plus sur le dataset COCO et ses spécificités : <a
+                            href="https://cocodataset.org/#home">https://cocodataset.org/#home</a>
+                    </li>
+                    <li>
+                        Pour en savoir plus sur ce projet d’interface de comparaison des méthodes d’explication : <a
+                            href="https://github.com/LarveTable/etude-pratique-CNNs">https://github.com/LarveTable/etude-pratique-CNNs</a>
+                    </li>
+                </ul>
             </section>
         </main>
     </div>

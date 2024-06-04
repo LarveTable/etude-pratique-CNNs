@@ -79,8 +79,6 @@ def result(request, experiment_id):
     if experiment.status == "created":
         experiment.status="pending"
         experiment.save()
-        thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
-        thread1.start()
     
     if experiment.status == "pending":
         try:
