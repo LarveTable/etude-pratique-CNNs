@@ -35,6 +35,8 @@ This page allow the user to select the result page from existing experiments
       </div>
       {% endfor %}
     </div>
+    {%else%}
+    <p>There is no experiment available: <a href="/experiments">Create one!</a></p>
     {% endif %}
   </div>
 </div>
