@@ -77,8 +77,13 @@
               </label>
             </div>
           </div>
-          <div class="invalid-feedback d-block">
-            Please select at least one method.
+          <div class="row">
+
+            <div class="d-flex justify-content-start col form-text" id="basic-addon4">SHAP is not supported for now
+            </div>
+            <div class="d-flex justify-content-end col invalid-feedback d-block">
+              Please select at least one method.
+            </div>
           </div>
         </div>
 
@@ -99,17 +104,32 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var form = document.querySelector('.needs-validation');
+      var methodChecks = document.querySelectorAll('.method-check');
+      var isMethodSelected = Array.from(methodChecks).some(check => check.checked);
+
+      if (!isMethodSelected) {
+        document.querySelector('.invalid-feedback.d-block').classList.remove('d-none');
+      } else {
+        document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
+      }
+
+      var images = document.getElementById('images');
+      if (!images.files.length) {
+        images.classList.add('is-invalid');
+      } else {
+        images.classList.remove('is-invalid');
+      }
 
       form.addEventListener('change', function (event) {
         var methodChecks = document.querySelectorAll('.method-check');
         var isMethodSelected = Array.from(methodChecks).some(check => check.checked);
 
-          if (!isMethodSelected) {
-            document.querySelector('.invalid-feedback.d-block').classList.remove('d-none');
-          } else {
-            document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
-          }
-        
+        if (!isMethodSelected) {
+          document.querySelector('.invalid-feedback.d-block').classList.remove('d-none');
+        } else {
+          document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
+        }
+
         var images = document.getElementById('images');
         if (!images.files.length) {
           images.classList.add('is-invalid');
