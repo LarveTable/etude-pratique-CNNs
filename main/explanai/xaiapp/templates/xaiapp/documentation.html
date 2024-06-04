@@ -1,6 +1,7 @@
 {% extends "xaiapp/base.html" %}
 {% block title %}Experiments{% endblock %}
 {% block content %}
+{%load static%}
 <div class="container mt-4">
     <div class="row">
         <!-- Vertical Menu -->
@@ -80,7 +81,7 @@
                     obtenir les explications demande de nombreux calculs et analyses de la part des méthodes
                     d’explication, ce qui prend plusieurs secondes.
                 </p>
-                <img src="" alt="page de résultats" title="page de résultats">
+                <img src="{% static 'xaiapp/result_page.png'%}" alt="page de résultats" title="page de résultats">
                 <p>
                     Cela peut prendre plusieurs secondes voire minutes par image, ne soyez donc pas étonnés d’attendre
                     plusieurs minutes au total si vous avez sélectionné de nombreuses images.

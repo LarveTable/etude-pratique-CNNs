@@ -198,7 +198,7 @@ def process_experiment(experiment_id):
     parameters = {m.name :{} for m in list(config.methods.all())}
     # get all method of this configuration
     methods=[m.name for m in list(config.methods.all())]
-
+    exp=None
     try:
         exp = run_comparison(methods, [config.model_name], parameters, experiment_id, True, ['dog'])
     except Exception as e:
@@ -279,8 +279,8 @@ def get_experiment_update(request, experiment_id):
                 "mean_time":round(stats.mean(img_time_array),3),
                 "median":round(stats.median(img_time_array),3),
             }
-            if len(img_time_array) > 1:
-                expe_statistics['variance'] = round(stats.variance(img_time_array))
+            # if len(img_time_array) > 1:
+            #     expe_statistics['variance'] = round(stats.variance(img_time_array))
 
             for m in methods:
                 match m: 
@@ -292,8 +292,8 @@ def get_experiment_update(request, experiment_id):
                             "mean_time":round(stats.mean(gradcam_img_time_array),3),
                             "median":round(stats.median(gradcam_img_time_array),3),
                         }
-                        if len(gradcam_img_time_array) > 1:
-                            expe_statistics['gradcam']['variance'] = round(stats.variance(gradcam_img_time_array),3)
+                        # if len(gradcam_img_time_array) > 1:
+                        #     expe_statistics['gradcam']['variance'] = round(stats.variance(gradcam_img_time_array),3)
                     case "lime":
                         expe_statistics['lime'] = {
                             "total_time":round(sum(lime_img_time_array),3),
@@ -302,8 +302,8 @@ def get_experiment_update(request, experiment_id):
                             "mean_time":round(stats.mean(lime_img_time_array),3),
                             "median":round(stats.median(lime_img_time_array),3),
                         }
-                        if len(lime_img_time_array) > 1:
-                            expe_statistics['lime']['variance'] = round(stats.variance(lime_img_time_array),3)
+                        # if len(lime_img_time_array) > 1:
+                        #     expe_statistics['lime']['variance'] = round(stats.variance(lime_img_time_array),3)
                     case "integrated_gradients":
                         expe_statistics['integrated_gradients'] = {
                             "total_time":round(sum(integrated_img_time_array),3),
@@ -312,8 +312,8 @@ def get_experiment_update(request, experiment_id):
                             "mean_time":round(stats.mean(integrated_img_time_array),3),
                             "median":round(stats.median(integrated_img_time_array),3),
                         }
-                        if len(integrated_img_time_array) > 1:
-                            expe_statistics['integrated_gradients']['variance'] = round(stats.variance(integrated_img_time_array),3)
+                        # if len(integrated_img_time_array) > 1:
+                        #     expe_statistics['integrated_gradients']['variance'] = round(stats.variance(integrated_img_time_array),3)
 
             data["statistics"]=expe_statistics
             data["methods"]=methods

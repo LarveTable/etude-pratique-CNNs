@@ -14,117 +14,137 @@
   <p> This experimentation plateform allows you to test and analyse different explanation algorithm for different
     models. You can get insights on an explanation such as the time, the surface of explanation and more</p>
 
-    <div class="p-2 container border rounded">
-      <form class="needs-validation" action="/experiments/" method="POST" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
-        <h4>Explanation Experiment</h4>
-        <div class="row g-3">
-          <!-- Model Selection -->
-          <div class="col-sm-4">
-            <label for="modelName" class="form-label">Model</label>
-            <select name="modelName" id="modelName" class="form-select" aria-label="Select Model">
-              <option value="vgg19">VGG19</option>
-              <option value="vgg16" disabled>VGG16</option>
-              <option value="resnet50" disabled>ResNet50</option>
-            </select>
-            <div class="form-text" id="basic-addon4">Only VGG19 is supported for now</div>
-          </div>
-    
-          <!-- Image Import: multiple images : png, jpg, jpeg are accepted -->
-          <div class="col-sm-7">
-            <label for="images" class="form-label">Images</label>
-            <input class="form-control" type="file" name="images" id="images" accept="image/png, image/jpg, image/jpeg" multiple required>
-            <div class="invalid-feedback">
-              Please select at least one image.
-            </div>
-          </div>
-    
-          <!-- Methods Selection -->
-          <div class="col-sm-12">
-            <label class="form-label">Methods</label>
-            <div class="list-group">
-              <div class="d-grid">
-                <label class="list-group-item d-inline">
-                  <input class="form-check-input method-check" type="checkbox" name="methodSelection" value="lime">
-                  <span>
-                    LIME
-                    <small class="d-block text-body-secondary">Lime</small>
-                  </span>
-                </label>
-                <label class="list-group-item d-inline">
-                  <input class="form-check-input method-check" type="checkbox" name="methodSelection" value="gradcam">
-                  <span>
-                    GradCam
-                    <small class="d-block text-body-secondary">Grad Cam</small>
-                  </span>
-                </label>
-                <label class="list-group-item d-inline">
-                  <input class="form-check-input method-check" type="checkbox" name="methodSelection" value="integrated_gradients">
-                  <span>
-                    Integrated Gradient
-                    <small class="d-block text-body-secondary">Integrated Gradient</small>
-                  </span>
-                </label>
-                <label class="list-group-item d-inline">
-                  <input disabled class="form-check-input method-check" type="checkbox" name="methodSelection" value="shap">
-                  <span>
-                    SHAP
-                    <small class="d-block text-body-secondary">Shapley Values</small>
-                  </span>
-                </label>
-              </div>
-            </div>
-            <div class="invalid-feedback d-block">
-              Please select at least one method.
-            </div>
-          </div>
-    
-          <div class="col-sm-6">
-            <button type="button" name="saveConfig" id="saveConfig" class="btn btn-primary" disabled>
-              save config / load config
-            </button>
-          </div>
-          <div class="col-lg-6">
-            <button type="submit" name="startBtn" id="startBtn" class="btn btn-primary">
-              Start
-            </button>
+  <div class="p-2 container border rounded">
+    <form class="needs-validation" action="/experiments/" method="POST" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <h4>Explanation Experiment</h4>
+      <div class="row g-3">
+        <!-- Model Selection -->
+        <div class="col-sm-4">
+          <label for="modelName" class="form-label">Model</label>
+          <select name="modelName" id="modelName" class="form-select" aria-label="Select Model">
+            <option value="vgg19">VGG19</option>
+            <option value="vgg16" disabled>VGG16</option>
+            <option value="resnet50" disabled>ResNet50</option>
+          </select>
+          <div class="form-text" id="basic-addon4">Only VGG19 is supported for now</div>
+        </div>
+
+        <!-- Image Import: multiple images : png, jpg, jpeg are accepted -->
+        <div class="col-sm-7">
+          <label for="images" class="form-label">Images</label>
+          <input class="form-control" type="file" name="images" id="images" accept="image/png, image/jpg, image/jpeg"
+            multiple required>
+          <div class="invalid-feedback">
+            Please select at least one image.
           </div>
         </div>
-      </form>
-    </div>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
+
+        <!-- Methods Selection -->
+        <div class="col-sm-12">
+          <label class="form-label">Methods</label>
+          <div class="list-group">
+            <div class="d-grid">
+              <label class="list-group-item d-inline">
+                <input class="form-check-input method-check" type="checkbox" name="methodSelection" value="lime">
+                <span>
+                  LIME
+                  <small class="d-block text-body-secondary">Lime</small>
+                </span>
+              </label>
+              <label class="list-group-item d-inline">
+                <input class="form-check-input method-check" type="checkbox" name="methodSelection" value="gradcam">
+                <span>
+                  GradCam
+                  <small class="d-block text-body-secondary">Grad Cam</small>
+                </span>
+              </label>
+              <label class="list-group-item d-inline">
+                <input class="form-check-input method-check" type="checkbox" name="methodSelection"
+                  value="integrated_gradients">
+                <span>
+                  Integrated Gradient
+                  <small class="d-block text-body-secondary">Integrated Gradient</small>
+                </span>
+              </label>
+              <label class="list-group-item d-inline">
+                <input disabled class="form-check-input method-check" type="checkbox" name="methodSelection"
+                  value="shap">
+                <span>
+                  SHAP
+                  <small class="d-block text-body-secondary">Shapley Values</small>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="invalid-feedback d-block">
+            Please select at least one method.
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <button type="button" name="saveConfig" id="saveConfig" class="btn btn-primary" disabled>
+            save config / load config
+          </button>
+        </div>
+        <div class="col-lg-6">
+          <button type="submit" name="startBtn" id="startBtn" class="btn btn-primary">
+            Start
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
       var form = document.querySelector('.needs-validation');
-    
-      form.addEventListener('submit', function(event) {
+
+      form.addEventListener('change', function (event) {
+        var methodChecks = document.querySelectorAll('.method-check');
+        var isMethodSelected = Array.from(methodChecks).some(check => check.checked);
+
+          if (!isMethodSelected) {
+            document.querySelector('.invalid-feedback.d-block').classList.remove('d-none');
+          } else {
+            document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
+          }
+        
+        var images = document.getElementById('images');
+        if (!images.files.length) {
+          images.classList.add('is-invalid');
+        } else {
+          images.classList.remove('is-invalid');
+        }
+      });
+      form.addEventListener('submit', function (event) {
         var images = document.getElementById('images');
         var methodChecks = document.querySelectorAll('.method-check');
         var isMethodSelected = Array.from(methodChecks).some(check => check.checked);
-        
+
         if (!images.files.length || !isMethodSelected) {
           if (!images.files.length) {
             images.classList.add('is-invalid');
           } else {
             images.classList.remove('is-invalid');
           }
-          
+
           if (!isMethodSelected) {
-            document.querySelector('.invalid-feedback.d-block').style.display = 'block';
+            document.querySelector('.invalid-feedback.d-block').classList.remove('d-none');
           } else {
-            document.querySelector('.invalid-feedback.d-block').style.display = 'none';
+            document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
           }
-    
+
           event.preventDefault();
           event.stopPropagation();
         } else {
-          document.querySelector('.invalid-feedback.d-block').style.display = 'none';
+          document.querySelector('.invalid-feedback.d-block').classList.add('d-none');
           images.classList.remove('is-invalid');
           form.classList.add('was-validated');
         }
       }, false);
     });
-    </script>
+  </script>
 
 </div>
 </div>
