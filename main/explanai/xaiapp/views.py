@@ -157,6 +157,10 @@ def image_result(request, experiment_id, image_id):
     # if COCO : get Coco masks 
     if gradcam_result:
         coco_mask=gradcam_result.coco_masks
+    elif lime_result:
+        coco_mask=lime_result.coco_masks
+    elif integrated_result:
+        coco_mask=integrated_result.coco_masks
 
     print(str(in_image))   
     total_time=round(lime_time + gradcam_time + integrated_time)
