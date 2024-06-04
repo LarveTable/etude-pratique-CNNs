@@ -52,7 +52,7 @@ class Experiment(models.Model):
     status = models.CharField(max_length=200, default="pending")
     created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
-        return self.creation_at.strftime('%Y-%m-%d %H:%M:%S')
+        return self.created_at.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class ExplanationResult(models.Model):

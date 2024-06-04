@@ -3,7 +3,9 @@
 {% block content %}
 
 <div class="container mt-3">
-      <h1>Results</h1>
+      <h2>Experiment n°{{ experiment_id }} 
+      <span id="status-badge" class="badge text-bg-warning">{{ experiment_status }}</span>
+      </h2>
   <div class="row">
     <!-- Sidebar -->
     <div class="col-md-3">
@@ -32,9 +34,7 @@
       <div class="p-2 container border rounded mb-3">
         <div class="row">
           <div class="col">
-            <h4>Experiment n°{{ experiment_id }} 
-              <span id="status_badge" class="badge text-bg-warning">{{ experiment_status }}</span>
-            </h4>
+            <h4>Configuration</h4>
             <p>
               Model: {{ config_data.model_name }} <br>
               Methods tested: <br>
@@ -111,7 +111,6 @@
     });
     // Stats
     // Total mean time
-    let meanTime, maxTime, medianTime, varianceTime, totalTime;
     totalTime = data.statistics.total_time;
     let totalTimeElt = document.getElementById("total-time");
     totalTimeElt.innerHTML = totalTime + "s";
@@ -130,9 +129,7 @@
 
     // For each method
     data.methods.forEach(m => {
-      let methodStats = data.statistics;
-      let meanTime, maxTime, medianTime, varianceTime, totalTime;
-      
+      let methodStats = data.statistics[m];
       // total time
       totalTime = methodStats.total_time;
       let totalTimeElt = document.getElementById(m+"-total-time");
@@ -144,7 +141,7 @@
       meanTimeElt.innerHTML = meanTime + "s";
 
       // max time
-      maxTime = methodStats.max_time;
+      const maxTime = methodStats.max_time;
       let maxTimeElt = document.getElementById(m+"-max-time");
       maxTimeElt.innerHTML = maxTime + "s";
 
@@ -155,8 +152,11 @@
     })
 
     // If the experiment is done : close the updates
-    if ("{{experiment_status}}" == "finished") {
-      updateClass("status_badge", "text-bg-warning", "text-bg-success");
+    const expeStatus = data.experiment.status;
+    if (expeStatus == "finished") {
+      let badgeElt = document.getElementById("status-badge");
+      minTimeElt.innerHTML = minTime + "s";
+      updateClass("status-badge", "text-bg-warning", "text-bg-success");
       eventSource.close();
     }
   };
