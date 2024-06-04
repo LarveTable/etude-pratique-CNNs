@@ -271,6 +271,7 @@ def get_experiment_update(request, experiment_id):
                 iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id, "img_time":round(img_time,3)}
                 data["status"].append(iimg_status)
 
+            print(sum(img_time_array))
             # stats:
             expe_statistics = {
                 "total_time":round(sum(img_time_array),3),
