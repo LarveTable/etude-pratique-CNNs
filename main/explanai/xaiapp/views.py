@@ -182,6 +182,9 @@ def image_result(request, experiment_id, image_id):
         
     return render(request, "xaiapp/image_result.html", {"in_image":in_image, "img_name":str(in_image), "experiment_id":experiment_id})
 
+def cred(request):
+    return render(request, "xaiapp/cred.html")
+
 # process each inimage according to config
 def process_experiment(experiment_id):
     # get experiment at this id
@@ -304,6 +307,7 @@ def get_experiment_update(request, experiment_id):
     response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
     response['Cache-Control'] = 'no-cache'
     return response
+
 
 
 def documentation(request):

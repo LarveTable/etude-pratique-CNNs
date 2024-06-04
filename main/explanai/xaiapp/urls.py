@@ -15,6 +15,7 @@ urlpatterns = [
     path("result/<int:experiment_id>/",views.result, name="result"),
     path("result/<int:experiment_id>/<int:image_id>/",views.image_result, name="image_result"),
     path("experiment_update/<int:experiment_id>/",views.get_experiment_update, name="experiment_update"),
+    path("cred",views.cred, name="cred"),
 ]
 
 
