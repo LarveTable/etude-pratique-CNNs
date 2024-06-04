@@ -1,70 +1,95 @@
-{% extends "xaiapp/base.html"%} 
+{% extends "xaiapp/base.html" %}
 {% block title %} Results {% endblock %}
 {% block content %}
 
 <div class="container mt-3">
-      <h2>Experiment n°{{ experiment_id }} 
-      <span id="status-badge" class="badge text-bg-warning">{{ experiment_status }}</span>
-      </h2>
+  <h2>Experiment n°{{ experiment_id }}
+    {% if experiment_status == "success" %}
+    <span id="status-badge" class="badge text-bg-success">{{ experiment_status }}</span>
+    {% elif experiment_status == "error" %}
+    <span id="status-badge" class="badge text-bg-danger">{{ experiment_status }}</span>
+    {% else %}
+    <span id="status-badge" class="badge text-bg-warning">{{ experiment_status }}</span>
+    {% endif %}
+    <p class="card-text"><small id="date-experiment" class="text-muted">{{experiment_date}}</small></p>
+  </h2>
   <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-3">
-      <div class="p-2 container border rounded mb-3">
-        <h3>Informations</h3>
-        <p>
-          <h5>Global</h5>
-          Total time: <span id="total-time">0s</span> <br>
-          Mean time: <span id="mean-time">0s</span> <br>
-          Max Time: <span id="max-time">0s</span> <br>
-          Min Time: <span id="min-time">0s</span>
-          {% for mth_name in methods %}
-            <h5>{{ mth_name }}</h5>
-            Total: <span id="{{ mth_name }}-total-time">0s</span><br>
-            Mean: <span id="{{ mth_name }}-mean-time">0s</span><br>
-            Max: <span id="{{ mth_name }}-max-time">0s</span><br>
-            Min: <span id="{{ mth_name }}-min-time">0s</span><br>
-            Var: <span id="{{ mth_name }}-var-time">0s</span><br>
-          {% endfor %}
-        </p>
-      </div>
-    </div>
-
     <!-- Main Content -->
-    <div class="col-md-9">
+    <div class="col-md-3">
       <div class="p-2 container border rounded mb-3">
         <div class="row">
           <div class="col">
             <h4>Configuration</h4>
             <p>
               Model: {{ config_data.model_name }} <br>
-              Methods tested: <br>
-              <ul>{% for mth_name in methods %} <li>{{ mth_name }}</li>{% endfor %}</ul>
+              Methods tested:
+            <ul>{% for mth_name in methods %} <li>{{ mth_name }}</li>{% endfor %}</ul>
             </p>
           </div>
         </div>
       </div>
 
-      <div class="container mb-6">
-        <div class="row row-cols-auto g-2">
-          {% if in_images %}
-            {% for img in in_images %}
-              <div class="col-auto h-100">
-                <a id="link-{{ img.image }}" href="">
-                  <div id="{{ img.image }}" class="card border-warning border-3" style="width: 100px;">
-                    <img src="{{ img.image.url }}" class="card-img-top" style="width: 100%; height:100px; object-fit:cover;" alt="{{ img.image.url }}" title="{{ img.image.url }}">
-                    <div class="card-body pt-0 pb-0">
-                      <p class="card-text"><small id="time-{{ img.image }}" class="text-muted">0s</small></p>
-                    </div>
-                  </div>
-                </a>
-              </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="col-md-9">
+      <div class="p-2 container border rounded mb-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Total</th>
+              <th scope="col">Mean</th>
+              <th scope="col">Max</th>
+              <th scope="col">Min</th>
+              <th scope="col">Var</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Global</th>
+              <td><span id="total-time">0s</span></td>
+              <td><span id="mean-time">0s</span></td>
+              <td><span id="max-time">0s</span></td>
+              <td><span id="min-time">0s</span></td>
+              <td><span id="var-time">0s</span></td>
+            </tr>
+            {% for mth_name in methods %}
+            <tr>
+              <th scope="row">{{ mth_name }}</th>
+              <td><span id="{{ mth_name }}-total-time">0s</span></td>
+              <td><span id="{{ mth_name }}-mean-time">0s</span></td>
+              <td><span id="{{ mth_name }}-max-time">0s</span></td>
+              <td><span id="{{ mth_name }}-min-time">0s</span></td>
+              <td><span id="{{ mth_name }}-var-time">0s</span></td>
+            </tr>
             {% endfor %}
-          {% else %}
-            <p>no input images</p>
-          {% endif %}
-        </div>
+          </tbody>
+        </table>
       </div>
     </div>
+    <div class="container mb-6">
+      <div class="row row-cols-auto g-2">
+        {% if in_images %}
+        {% for img in in_images %}
+        <div class="col-auto h-100">
+          <a id="link-{{ img.image }}" href="">
+            <div id="{{ img.image }}" class="card border-warning border-3" style="width: 100px;">
+              <img src="{{ img.image.url }}" class="card-img-top" style="width: 100%; height:100px; object-fit:cover;"
+                alt="{{ img.image.url }}" title="{{ img.image.url }}">
+              <div class="card-body pt-0 pb-0">
+                <p class="card-text"><small id="time-{{ img.image }}" class="text-muted">0s</small></p>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>no input images</p>
+        {% endif %}
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -91,23 +116,21 @@
           // Change border to green
           updateClass(imgS.imgName, "border-warning", "border-success");
           // Add link to image 
-          let imgLink = document.getElementById("link-"+imgS.imgName);
+          let imgLink = document.getElementById("link-" + imgS.imgName);
           // Check if the element exists
           if (imgLink) {
-              // Modify the href attribute
-              imgLink.href = '/result/{{experiment_id}}/' + imgS.id + '/';
+            // Modify the href attribute
+            imgLink.href = '/result/{{experiment_id}}/' + imgS.id + '/';
           }
           // Time 
-          let imgTime = document.getElementById("time-"+imgS.imgName);
+          let imgTime = document.getElementById("time-" + imgS.imgName);
           if (imgTime) {
-              // Modify the href attribute
-              imgTime.innerHTML = imgS.img_time + "s";
+            // Modify the href attribute
+            imgTime.innerHTML = imgS.img_time + "s";
           }
 
           break;
       }
-      //const times = data.times;
-
     });
     // Stats
     // Total mean time
@@ -126,37 +149,55 @@
     minTime = data.statistics.min_time;
     let minTimeElt = document.getElementById("min-time");
     minTimeElt.innerHTML = minTime + "s";
+    // var
+    varTime = data.statistics.variance;
+    if (varTime) {
+      let varTimeElt = document.getElementById("var-time");
+      varTimeElt.innerHTML = varTime + "s";
+    }
 
     // For each method
     data.methods.forEach(m => {
       let methodStats = data.statistics[m];
       // total time
       totalTime = methodStats.total_time;
-      let totalTimeElt = document.getElementById(m+"-total-time");
+      let totalTimeElt = document.getElementById(m + "-total-time");
       totalTimeElt.innerHTML = totalTime + "s";
 
       // mean time
       meanTime = methodStats.mean_time;
-      let meanTimeElt = document.getElementById(m+"-mean-time");
+      let meanTimeElt = document.getElementById(m + "-mean-time");
       meanTimeElt.innerHTML = meanTime + "s";
 
       // max time
       const maxTime = methodStats.max_time;
-      let maxTimeElt = document.getElementById(m+"-max-time");
+      let maxTimeElt = document.getElementById(m + "-max-time");
       maxTimeElt.innerHTML = maxTime + "s";
 
       // min time
       minTime = methodStats.min_time;
-      let minTimeElt = document.getElementById(m+"-min-time");
+      let minTimeElt = document.getElementById(m + "-min-time");
       minTimeElt.innerHTML = minTime + "s";
-    })
+
+      // var 
+      varTime = methodStats.variance;
+      if (varTime) {
+        let varTimeElt = document.getElementById(m + "-var-time");
+        varTimeElt.innerHTML = varTime + "s";
+      }
+    });
 
     // If the experiment is done : close the updates
     const expeStatus = data.experiment.status;
+    let badgeElt = document.getElementById("status-badge");
+    badgeElt.innerHTML = expeStatus;
+    console.log("Status:" + expeStatus)
     if (expeStatus == "finished") {
-      let badgeElt = document.getElementById("status-badge");
-      minTimeElt.innerHTML = minTime + "s";
       updateClass("status-badge", "text-bg-warning", "text-bg-success");
+      eventSource.close();
+    }
+    if (expeStatus == "error") {
+      updateClass("status-badge", "text-bg-warning", "text-bg-danger");
       eventSource.close();
     }
   };
@@ -167,8 +208,10 @@
 
   function updateClass(id, oldClass, newClass) {
     const e = document.getElementById(id);
-    e.classList.remove(oldClass);
-    e.classList.add(newClass);
+    if (e) {
+      e.classList.remove(oldClass);
+      e.classList.add(newClass);
+    }
   }
 </script>
 

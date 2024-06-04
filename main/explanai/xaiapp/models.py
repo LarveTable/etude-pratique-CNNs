@@ -49,7 +49,7 @@ class InImage(models.Model):
 # A config that's been executed containing results with images
 class Experiment(models.Model):
     config = models.ForeignKey(Config, on_delete=models.CASCADE)
-    status = models.CharField(max_length=200, default="pending")
+    status = models.CharField(max_length=200, default="created")
     created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.created_at.strftime('%Y-%m-%d %H:%M:%S')
