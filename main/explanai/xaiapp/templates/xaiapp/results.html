@@ -4,7 +4,7 @@
 
 <div class="container mt-3">
   <h2>Experiment n°{{ experiment_id }}
-    {% if experiment_status == "success" %}
+    {% if experiment_status == "finished" %}
     <span id="status-badge" class="badge text-bg-success">{{ experiment_status }}</span>
     {% elif experiment_status == "error" %}
     <span id="status-badge" class="badge text-bg-danger">{{ experiment_status }}</span>

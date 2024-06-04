@@ -162,7 +162,6 @@ def image_result(request, experiment_id, image_id):
     elif integrated_result:
         coco_mask=integrated_result.coco_masks
 
-    print(str(in_image))   
     total_time=round((lime_time + gradcam_time + integrated_time), 3)
     if in_image.status == "finished":
         result={
@@ -234,6 +233,7 @@ def get_experiment_update(request, experiment_id):
     def event_stream():
         while 1:
             time.sleep(1)
+            experiment = get_object_or_404(Experiment, pk=experiment_id)
             print("status:", experiment.status)
             # each image : status and if done out image
             data = { 
