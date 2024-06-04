@@ -76,7 +76,10 @@ def result(request, experiment_id):
     if experiment.status == "created":
         experiment.status="pending"
         experiment.save()
-    
+    if experiment.status == "error": 
+        experiment.status="pending"
+        experiment.save()
+
     if experiment.status == "pending":
         try:
             thread1 = threading.Thread(target=process_experiment, args=(experiment_id,))
@@ -198,15 +201,14 @@ def process_experiment(experiment_id):
     parameters = {m.name :{} for m in list(config.methods.all())}
     # get all method of this configuration
     methods=[m.name for m in list(config.methods.all())]
-    exp=None
     try:
         exp = run_comparison(methods, [config.model_name], parameters, experiment_id, True, ['dog'])
+        # All results in exp object
+        print(exp.results)
     except Exception as e:
         experiment.status="error"
         experiment.save()
         print(f"Error when running: {e}")
-    # All results in exp object
-    print(exp.results)
 
     ''' fake process for demo
     experiment = get_object_or_404(Experiment, pk=experiment_id)
@@ -234,7 +236,6 @@ def get_experiment_update(request, experiment_id):
         while 1:
             time.sleep(1)
             experiment = get_object_or_404(Experiment, pk=experiment_id)
-            print("status:", experiment.status)
             # each image : status and if done out image
             data = { 
                 "message": "Experiment update",

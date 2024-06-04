@@ -42,7 +42,7 @@
               <th scope="col">Mean</th>
               <th scope="col">Max</th>
               <th scope="col">Min</th>
-              <th scope="col">Var</th>
+              <!-- <th scope="col">Var</th> -->
             </tr>
           </thead>
           <tbody>
@@ -52,7 +52,7 @@
               <td><span id="mean-time">0s</span></td>
               <td><span id="max-time">0s</span></td>
               <td><span id="min-time">0s</span></td>
-              <td><span id="var-time">0s</span></td>
+              <!-- <td><span id="var-time">0s</span></td> -->
             </tr>
             {% for mth_name in methods %}
             <tr>
@@ -61,7 +61,7 @@
               <td><span id="{{ mth_name }}-mean-time">0s</span></td>
               <td><span id="{{ mth_name }}-max-time">0s</span></td>
               <td><span id="{{ mth_name }}-min-time">0s</span></td>
-              <td><span id="{{ mth_name }}-var-time">0s</span></td>
+              <!-- <td><span id="{{ mth_name }}-var-time">0s</span></td> -->
             </tr>
             {% endfor %}
           </tbody>
@@ -101,7 +101,7 @@
   // When a message is received 
   eventSource.onmessage = function (e) {
     const data = JSON.parse(e.data);
-    console.log(data);
+    //console.log(data);
 
     // Update UI status for every cards 
     // each img status :
@@ -191,7 +191,7 @@
     const expeStatus = data.experiment.status;
     let badgeElt = document.getElementById("status-badge");
     badgeElt.innerHTML = expeStatus;
-    console.log("Status:" + expeStatus)
+    //console.log("Status:" + expeStatus)
     if (expeStatus == "finished") {
       updateClass("status-badge", "text-bg-warning", "text-bg-success");
       eventSource.close();
