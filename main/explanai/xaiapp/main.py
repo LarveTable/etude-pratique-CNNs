@@ -81,7 +81,8 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
             # enumerate through the images and apply xai methods
             #fbar = tqdm(files)
             #for file_name in fbar:
-            for iimg in tqdm(config.inimage_set.all()):
+            # if image status != finished => processed 
+            for iimg in tqdm(config.inimage_set.all().filter(status="pending")):
                 #fbar.set_description("Processing %s" % file_name)
                 #print('Processing : '+file_name)
                 img, _ = next(iterateur)
