@@ -1,74 +1,70 @@
-{% extends "xaiapp/base.html"%} {%block title %} Results {% endblock %}
-{%block content %}
-
-<!-- TODO 
-- Use the same form as before but disabled
--->
+{% extends "xaiapp/base.html"%} 
+{% block title %} Results {% endblock %}
+{% block content %}
 
 <div class="container mt-3">
-  <h1>Results</h1>
-  <div class="p-2 container border rounded mb-3">
-    <div class="flex row">
-      <div class="col">
-        <h4>Experiment n°{{experiment_id}} 
-          <span id="status_badge" class="badge text-bg-warning">{{experiment_status}}</span>
-        </h4>
-        <p>
-          Model: {{config_data.model_name}} <br>
-          Methods tested: <br>
-        <ul>{% for mth_name in methods%} <li>{{mth_name}}</li>{%endfor%}</ul>
-        </p>
-      </div>
-      <!-- <div class="vr"></div> -->
-      <div class="col">
+      <h1>Results</h1>
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3">
+      <div class="p-2 container border rounded mb-3">
         <h3>Informations</h3>
         <p>
           <h5>Global</h5>
           Total time: <span id="total-time">0s</span> <br>
           Mean time: <span id="mean-time">0s</span> <br>
-          Max Time: <span id="max-time">0s</span> 
+          Max Time: <span id="max-time">0s</span> <br>
           Min Time: <span id="min-time">0s</span>
-          {% for mth_name in methods%}
-            <h5>{{mth_name}}</h5>
-            Total: <span id="{{mth_name}}-total-time">0s</span><br>
-            Mean: <span id="{{mth_name}}-mean-time">0s</span><br>
-            Max: <span id="{{mth_name}}-max-time">0s</span><br>
-            Min: <span id="{{mth_name}}-min-time">0s</span><br>
-            Var: <span id="{{mth_name}}-var-time">0s</span><br>
-          {%endfor%}
+          {% for mth_name in methods %}
+            <h5>{{ mth_name }}</h5>
+            Total: <span id="{{ mth_name }}-total-time">0s</span><br>
+            Mean: <span id="{{ mth_name }}-mean-time">0s</span><br>
+            Max: <span id="{{ mth_name }}-max-time">0s</span><br>
+            Min: <span id="{{ mth_name }}-min-time">0s</span><br>
+            Var: <span id="{{ mth_name }}-var-time">0s</span><br>
+          {% endfor %}
         </p>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="container mb-6">
-  <div class="row row-cols-auto g-2">
-    {%if in_images%}
-    {% for img in in_images%}
-    <div class="col-auto h-100">
-      <!-- <a id="link-{{img.image}}" href="/result/{{experiment_id}}/{{img.id}}"> -->
-      <a id="link-{{img.image}}" href="">
-        <div id="{{img.image}}" class="card border-warning border-3" style="width: 100px;">
-          <img src="{{img.image.url}}" class="card-img-top" style="width: 100%; height:100px; object-fit:cover;"
-            alt="{{img.image.url}}" title="{{img.image.url}}">
-          <div class="card-body pt-0 pb-0">
-            <!--<h5 class="card-title" style="overflow: scroll;
-          max-width: 100%;
-          text-overflow: ellipsis;
-          width: fit-content;
-          white-space: nowrap;">{{img.image}}</h5>-->
-            <p class="card-text"><small id="time-{{img.image}}" class="text-muted">0s</small></p>
+    <!-- Main Content -->
+    <div class="col-md-9">
+      <div class="p-2 container border rounded mb-3">
+        <div class="row">
+          <div class="col">
+            <h4>Experiment n°{{ experiment_id }} 
+              <span id="status_badge" class="badge text-bg-warning">{{ experiment_status }}</span>
+            </h4>
+            <p>
+              Model: {{ config_data.model_name }} <br>
+              Methods tested: <br>
+              <ul>{% for mth_name in methods %} <li>{{ mth_name }}</li>{% endfor %}</ul>
+            </p>
           </div>
         </div>
-      </a>
+      </div>
+
+      <div class="container mb-6">
+        <div class="row row-cols-auto g-2">
+          {% if in_images %}
+            {% for img in in_images %}
+              <div class="col-auto h-100">
+                <a id="link-{{ img.image }}" href="">
+                  <div id="{{ img.image }}" class="card border-warning border-3" style="width: 100px;">
+                    <img src="{{ img.image.url }}" class="card-img-top" style="width: 100%; height:100px; object-fit:cover;" alt="{{ img.image.url }}" title="{{ img.image.url }}">
+                    <div class="card-body pt-0 pb-0">
+                      <p class="card-text"><small id="time-{{ img.image }}" class="text-muted">0s</small></p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>no input images</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    {%endfor%}
-    {%else%}
-    <p>
-      no input images
-    </p>
-    {%endif%}
   </div>
 </div>
 
@@ -88,7 +84,7 @@
     // Change border according to status
     const imagesStatus = data.status;
     imagesStatus.forEach(imgS => {
-      const imgCard = document.getElementById(imgS.imgName)
+      const imgCard = document.getElementById(imgS.imgName);
       const imgStatus = imgS.status;
       switch (imgStatus) {
         case "finished":
@@ -165,19 +161,15 @@
     }
   };
 
-
   eventSource.onerror = function (e) {
     console.error('EventSource failed:', e);
   };
 
   function updateClass(id, oldClass, newClass) {
     const e = document.getElementById(id);
-
     e.classList.remove(oldClass);
     e.classList.add(newClass);
   }
-
 </script>
-
 
 {% endblock %}
