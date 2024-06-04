@@ -7,6 +7,7 @@ from django.urls import reverse
 from .models import Config, InImage, Experiment,ExplanationMethod, ExplanationResult
 
 import threading
+import statistics as stats
 
 from .main import *
 from utils.load_coco_images import download
@@ -211,9 +212,13 @@ def process_experiment(experiment_id):
 # Update the experiment data : images and experiment status
 # todo : restructure data : image->time,status; all-time, min..., status
 def get_experiment_update(request, experiment_id):
+    # get experiment
     experiment = get_object_or_404(Experiment, pk=experiment_id)
+
+    # get config 
     config=experiment.config
-    #print("status = " , experiment.status)
+    methods=[m.name for m in list(config.methods.all())]
+
     def event_stream():
         while 1:
             time.sleep(1)
@@ -222,13 +227,74 @@ def get_experiment_update(request, experiment_id):
                 "message": "Experiment update",
                 "status":[]
             }
+            img_time_array=[]
+            gradcam_img_time_array=[]
+            lime_img_time_array=[]
+            integrated_img_time_array=[]
             for iimg in config.inimage_set.all():
-                # name, status, outimage
-                img_time=round(Result.objects.get(intput_image=iimg).elapsed_time,2)
+                # total time with this image (all methods)
+                img_time=0
+                method_time=0
+                for m in methods:
+                    # time for this image with method m
+                    if iimg.status == "finished":
+                        method_time=round(Result.objects.get(method=ExplanationMethod.objects.get(name=m), intput_image=iimg).elapsed_time,4)
+                    
+                    img_time+=method_time
+                    match m: 
+                        case "gradcam":
+                            gradcam_img_time_array.append(method_time)
+                        case "lime":
+                            lime_img_time_array.append(method_time)
+                        case "integrated_gradients":
+                            integrated_img_time_array.append(method_time)
+
+                img_time_array.append(img_time)
+
                 iimg_status = {"imgName":str(iimg.image), "status": iimg.status, "id":iimg.id, "img_time":img_time}
                 data["status"].append(iimg_status)
 
-            #print(data)
+            # stats:
+            expe_statistics = {
+                "total_time":round(sum(img_time_array),3),
+                "max_time":round(max(img_time_array),3),
+                "min_time":round(min(img_time_array),3),
+                "mean_time":round(stats.mean(img_time_array),3),
+                "median":round(stats.median(img_time_array),3),
+            }
+            if len(img_time_array) > 1:
+                expe_statistics['variance'] = round(stats.variance(img_time_array))
+
+                for m in methods:
+                    match m: 
+                        case "gradcam":
+                            expe_statistics['gradcam'] = {
+                                "total_time":round(sum(gradcam_img_time_array),3),
+                                "max_time":round(max(gradcam_img_time_array),3),
+                                "min_time":round(min(gradcam_img_time_array),3),
+                                "mean_time":round(stats.mean(gradcam_img_time_array),3),
+                                "median":round(stats.median(gradcam_img_time_array),3),
+                            }
+                        case "lime":
+                            expe_statistics['lime'] = {
+                                "total_time":round(sum(lime_img_time_array),3),
+                                "max_time":round(max(lime_img_time_array),3),
+                                "min_time":round(min(lime_img_time_array),3),
+                                "mean_time":round(stats.mean(lime_img_time_array),3),
+                                "median":round(stats.median(lime_img_time_array),3),
+                            }
+                        case "integrated_gradients":
+                            expe_statistics['integrated'] = {
+                                "total_time":round(sum(integrated_img_time_array),3),
+                                "max_time":round(max(integrated_img_time_array),3),
+                                "min_time":round(min(integrated_img_time_array),3),
+                                "mean_time":round(stats.mean(integrated_img_time_array),3),
+                                "median":round(stats.median(integrated_img_time_array),3),
+                            }
+
+            data["statistics"]=expe_statistics
+            data["methods"]=methods
+
             json_data = json.dumps(data)
             yield f"data: {json_data}\n\n"
 

@@ -23,19 +23,24 @@
       <div class="col">
         <h3>Informations</h3>
         <p>
+          <h5>Global</h5>
           Total time: <span id="total-time">0s</span> <br>
-          {% for mth_name in methods%}
-            Time for {{mth_name}}: <span id="{{mth_name}}-time">0s</span><br>
-          {%endfor%}
-          Mean Time for one image: <span id="mean-time">0s</span> <br>
+          Mean time: <span id="mean-time">0s</span> <br>
           Max Time: <span id="max-time">0s</span> 
           Min Time: <span id="min-time">0s</span>
+          {% for mth_name in methods%}
+            <h5>{{mth_name}}</h5>
+            Total: <span id="{{mth_name}}-total-time">0s</span><br>
+            Mean: <span id="{{mth_name}}-mean-time">0s</span><br>
+            Max: <span id="{{mth_name}}-max-time">0s</span><br>
+            Min: <span id="{{mth_name}}-min-time">0s</span><br>
+            Var: <span id="{{mth_name}}-var-time">0s</span><br>
+          {%endfor%}
         </p>
       </div>
     </div>
   </div>
 </div>
-
 
 <div class="container mb-6">
   <div class="row row-cols-auto g-2">
@@ -108,6 +113,51 @@
       //const times = data.times;
 
     });
+    // Stats
+    // Total mean time
+    let meanTime, maxTime, medianTime, varianceTime, totalTime;
+    totalTime = data.statistics.total_time;
+    let totalTimeElt = document.getElementById("total-time");
+    totalTimeElt.innerHTML = totalTime + "s";
+    // Global mean time
+    meanTime = data.statistics.mean_time;
+    let meanTimeElt = document.getElementById("mean-time");
+    meanTimeElt.innerHTML = meanTime + "s";
+    // max time
+    maxTime = data.statistics.max_time;
+    let maxTimeElt = document.getElementById("max-time");
+    maxTimeElt.innerHTML = maxTime + "s";
+    // min time
+    minTime = data.statistics.min_time;
+    let minTimeElt = document.getElementById("min-time");
+    minTimeElt.innerHTML = minTime + "s";
+
+    // For each method
+    data.methods.forEach(m => {
+      let methodStats = data.statistics;
+      let meanTime, maxTime, medianTime, varianceTime, totalTime;
+      
+      // total time
+      totalTime = methodStats.total_time;
+      let totalTimeElt = document.getElementById(m+"-total-time");
+      totalTimeElt.innerHTML = totalTime + "s";
+
+      // mean time
+      meanTime = methodStats.mean_time;
+      let meanTimeElt = document.getElementById(m+"-mean-time");
+      meanTimeElt.innerHTML = meanTime + "s";
+
+      // max time
+      maxTime = methodStats.max_time;
+      let maxTimeElt = document.getElementById(m+"-max-time");
+      maxTimeElt.innerHTML = maxTime + "s";
+
+      // min time
+      minTime = methodStats.min_time;
+      let minTimeElt = document.getElementById(m+"-min-time");
+      minTimeElt.innerHTML = minTime + "s";
+    })
+
     // If the experiment is done : close the updates
     if ("{{experiment_status}}" == "finished") {
       updateClass("status_badge", "text-bg-warning", "text-bg-success");
