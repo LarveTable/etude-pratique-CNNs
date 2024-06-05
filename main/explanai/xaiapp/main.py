@@ -100,6 +100,9 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                 # apply the regex pattern to the file name without extension
                 id = re.findall(id_pattern, file_name_without_extension) #id[0] contains the id
 
+                if id[0] == '':
+                    use_coco = False
+
                 # instantiate the neural network and return the model and the predictions
                 match nn:
                     case 'vgg19':
@@ -135,14 +138,23 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
-                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+                            
+                            if use_coco:
+                                result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                                cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+                                warn = False
+                            else:
+                                result_intersect = {}
+                                result_intersect["x"] = 0
+                                coco_masks = "None"
+                                warn = True
+
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False) #vgg19 prend en compte les pixels noirs, on les rend transparents ?
                             
                             save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
                                          result_intersect, use_coco, filtered_image, output_image, 
-                                        mask, coco_masks, iimg, dataset_path, method)
+                                        mask, coco_masks, iimg, dataset_path, method, warn=warn)
 
                             #retrieve elapsed time from db
                             #elapsed_time = Result.objects.get(explanation_results=ex_res).elapsed_time
@@ -154,14 +166,23 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
-                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+
+                            if use_coco:
+                                result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                                cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+                                warn = False
+                            else:
+                                result_intersect = {}
+                                result_intersect["x"] = 0
+                                coco_masks = "None"
+                                warn = True
+
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             
                             save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
                                          result_intersect, use_coco, filtered_image, output_image, 
-                                        mask, coco_masks, iimg, dataset_path, method)
+                                        mask, coco_masks, iimg, dataset_path, method, warn=warn)
                             
                         case 'shap':
                             #todo
@@ -174,14 +195,23 @@ def run_comparison(xai_methods, neural_networks, parameters, expe_id, use_coco=F
                             cv2.imwrite(image_directory+'/'+"mask"+file_name, mask)
                             cv2.imwrite(image_directory+'/'+"filtered"+file_name, filtered_image)
                             write_to_file(time_elapsed_directory, file_name_without_extension+'.txt', str(round(time_elapsed, 3))+'s')
-                            result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
-                            cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+
+                            if use_coco:
+                                result_intersect, coco_masks = evaluate(int(id[0]), coco_categories, mask)
+                                cv2.imwrite(image_directory+'/'+"coco_masks"+file_name, coco_masks)
+                                warn = False
+                            else:
+                                result_intersect = {}
+                                result_intersect["x"] = 0
+                                coco_masks = "None"
+                                warn = True
+
                             processed_filter = process_one(filtered_image)
                             _, _, second_pass_pred, _ = init_model_vgg19(processed_filter, file_name, use_gradcam=False)
                             
                             save_results(ex_res, coco_categories_instances, time_elapsed, second_pass_pred,
                                          result_intersect, use_coco, filtered_image, output_image, 
-                                        mask, coco_masks, iimg, dataset_path, method)
+                                        mask, coco_masks, iimg, dataset_path, method, warn=warn)
                             
                         case _:
                             print("Error : method not found.")
@@ -211,12 +241,17 @@ def delete_directory(directory):
 
 def save_results(explanation_result, coco_cat_i, time_elapsed, second_pass_pred, 
                  result_intersect, use_coco, filtered_image, output_image, 
-                 mask, coco_masks, iimg, dataset_path, method):
+                 mask, coco_masks, iimg, dataset_path, method, warn=False):
 
     filtered_image = numpy_array_to_django_file(filtered_image, dataset_path+"/out")
     output_image = numpy_array_to_django_file(output_image, dataset_path+"/out")
     mask = numpy_array_to_django_file(mask, dataset_path+"/out")
-    coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
+
+    if warn:
+        warn = open("./main/explanai/xaiapp/warn/warn.png", 'rb')
+        coco_masks = File(warn, name="warn")
+    else:
+        coco_masks = numpy_array_to_django_file(coco_masks, dataset_path+"/out")
 
     res = explanation_result.result_set.create(explanation_results=explanation_result ,elapsed_time=time_elapsed, second_pass_pred=second_pass_pred, 
                                     result_intersect=result_intersect, use_coco=use_coco, 
