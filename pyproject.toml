@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "xaicomparator"
+version = "1.0"
+description = "Tool aiming to compare different XAI methods"
+authors = ["Yorick, Adèle, Taha, Sulaymane"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+opencv-python = "^4.9.0"
+tqdm = "^4.66.2"
+matplotlib = "^3.8.4"
+pillow = "^10.2.0"
+numpy = "^1.26.4"
+django = "^5.0.4"
+scikit-image = "^0.20.0"
+torchvision = "^0.18.0"
+lime = "^0.2.0.1"
+tensorflow = "^2.15.0"
+shap = "^0.45.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
