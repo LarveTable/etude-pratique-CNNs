@@ -9,9 +9,9 @@ To install and run this project :
     - Open a terminal and run "make" under 'main/explanai/cocoapi/PythonAPI' (you will need "gcc" or any c compiler, and "make" commands
     installed)
 
-    - Open a terminal in '../main' (you should be in the folder "etude-pratique-CNNs").
-
     - Install poetry (it can be found at : "https://python-poetry.org/docs/#installing-with-the-official-installer")
+
+    - Open a terminal in '../main' (you should be in the folder "etude-pratique-CNNs").
 
     - Run 'poetry install --no-root'
 
