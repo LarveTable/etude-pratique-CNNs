@@ -1,6 +1,12 @@
 To install and run this project :
 
-    - Run "make" under 'main/explanai/cocoapi/PythonAPI' (you will need "gcc" or any c compiler, and "make" commands
+    - Download COCO annotations at 'http://images.cocodataset.org/annotations/annotations_trainval2017.zip'
+
+    - Unzip the file (if it hasn't done it itself)
+
+    - Place the resulted "annotations" file in 'main/explanai/cocoapi'
+
+    - Open a terminal and run "make" under 'main/explanai/cocoapi/PythonAPI' (you will need "gcc" or any c compiler, and "make" commands
     installed)
 
     - Open a terminal in '../main' (you should be in the folder "etude-pratique-CNNs").
