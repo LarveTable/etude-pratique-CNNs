@@ -23,3 +23,9 @@ To install and run this project :
 
     - When the server has started, you'll see "Starting development server at http://127.0.0.1:8000/",
     just open this localhost adress with your web browser and you're done !
+
+Known bugs : 
+    - On Linux mainly, when running "make" under 'main/explanai/cocoapi/PythonAPI', it can 
+    fail because it tries compiling with the command "python", but depending on your Python install,
+    your only available command could be "python3". I did not found a fix yet, but you could try to
+    install an older version of Python (which had "python" as alias), and use it to run "make".
