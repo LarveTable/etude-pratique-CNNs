@@ -1,0 +1,17 @@
+To install and run this project :
+
+    - Run "make" under 'main/explanai/cocoapi/PythonAPI' (you will need "gcc" or any c compiler, and "make" commands
+    installed)
+
+    - Open a terminal in '../main' (you should be in the folder "etude-pratique-CNNs").
+
+    - Run 'poetry install --no-root'
+
+    - Now that all the dependancies are installed, you can check if everything works by running 
+    'poetry run python main/explanai/manage.py', you should get a list of available commands.
+
+    - To start the application, just run 'poetry run python main/explanai/manage.py runserver'. The first 
+    start may take some time to initialize some packages dependancies.
+
+    - When the server has started, you'll see "Starting development server at http://127.0.0.1:8000/",
+    just open this localhost adress with your web browser and you're done !
