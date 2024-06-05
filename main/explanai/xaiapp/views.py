@@ -101,6 +101,8 @@ def experiments_list(request):
 def image_result(request, experiment_id, image_id):
     result={}
     lime_m=None
+    lime_spp=None
+    lime_filtered=None
     lime_result=None
     lime_image=None
     lime_mask=None
@@ -111,6 +113,8 @@ def image_result(request, experiment_id, image_id):
     integrated_m=None
     integrated_image=None
     integrated_mask=None
+    integrated_spp=None
+    integrated_filtered=None
     integrated_time=0
     integrated_intersect=0
 
@@ -118,6 +122,8 @@ def image_result(request, experiment_id, image_id):
     gradcam_result=None
     gradcam_image=None
     gradcam_mask=None
+    gradcam_spp=None
+    gradcam_filtered=None
     gradcam_time=0
     gradcam_intersect=0
 
@@ -138,6 +144,8 @@ def image_result(request, experiment_id, image_id):
         lime_result=Result.objects.get(intput_image=in_image, method=lime_m)
         lime_image=lime_result.final
         lime_mask=lime_result.mask
+        lime_filtered=lime_result.filtered
+        lime_spp=lime_result.second_pass_pred
         lime_time=round(lime_result.elapsed_time,3)
         lime_intersect=round(next(iter(lime_result.result_intersect.values())),3)
 
@@ -146,6 +154,8 @@ def image_result(request, experiment_id, image_id):
         gradcam_result=Result.objects.get(intput_image=in_image, method=gradcam_m)
         gradcam_image=gradcam_result.final
         gradcam_mask=gradcam_result.mask
+        gradcam_filtered=gradcam_result.filtered
+        gradcam_spp=gradcam_result.second_pass_pred
         gradcam_time=round(gradcam_result.elapsed_time,3)
         gradcam_intersect=round(next(iter(gradcam_result.result_intersect.values())),3)
 
@@ -154,6 +164,8 @@ def image_result(request, experiment_id, image_id):
         integrated_result=Result.objects.get(intput_image=in_image, method=integrated_m)
         integrated_image=integrated_result.final
         integrated_mask=integrated_result.mask
+        integrated_filtered=integrated_result.filtered
+        integrated_spp=integrated_result.second_pass_pred
         integrated_time=round(integrated_result.elapsed_time,3)
         integrated_intersect=round(next(iter(integrated_result.result_intersect.values())),3)
 
@@ -169,10 +181,16 @@ def image_result(request, experiment_id, image_id):
     if in_image.status == "finished":
         result={
                 "lime_image":lime_image,
+                "lime_filtered":lime_filtered,
                 "integrated_image":integrated_image,
                 "gradcam_image":gradcam_image,
+                "gradcam_filtered":gradcam_filtered,
+                "integrated_filtered":integrated_filtered,
                 "coco_mask":coco_mask,
                 "gradcam_mask":gradcam_mask,
+                "gradcam_second_pass_prediction":gradcam_spp,
+                "lime_second_pass_prediction":lime_spp,
+                "integrated_second_pass_prediction":integrated_spp,
                 "integrated_mask":integrated_mask,
                 "lime_mask":lime_mask,
                 "prediction":explanation_result.pred_top1,
