@@ -11,6 +11,8 @@ To install and run this project :
 
     - Open a terminal in '../main' (you should be in the folder "etude-pratique-CNNs").
 
+    - Install poetry (it can be found at : "https://python-poetry.org/docs/#installing-with-the-official-installer")
+
     - Run 'poetry install --no-root'
 
     - Now that all the dependancies are installed, you can check if everything works by running 
