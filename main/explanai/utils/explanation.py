@@ -1,5 +1,7 @@
 from datetime import datetime
 
+#TEST PURPOSES
+
 class Explanation():
     def __init__(self, id, methods, neural_network, parameters):
         self.id = id
