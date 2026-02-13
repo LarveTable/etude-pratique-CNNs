@@ -7,7 +7,17 @@ This is the code of a practical study "A Comparative Study of Neural Network Exp
 This application is meant to accelerate the process of choosing the right explanation method for a certain CNN model.  You can for example import some images from the [COCO dataset](https://cocodataset.org/) and see how close the explanation of a prediction is to the real zone of interest of the image. 
 The work done heare is intended to be extended, adding models, methods and other insights can be done easily in the back-end and front-end.
 
+### Demo
+
+
+https://github.com/user-attachments/assets/18941cf2-ce3a-4eab-b768-82a7a0d6836c
+
+
 ### Dependencies 
+- C compiler
+- Make
+- Python
+- Poetry
 
 ### Tutorial 
 1. Clone project
