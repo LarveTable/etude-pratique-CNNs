@@ -12,14 +12,14 @@ The work done heare is intended to be extended, adding models, methods and other
 ### Tutorial 
 1. Clone project
 2. Install all dependencies with pip
-3. install coco dataset in the right folder and follow these instructions
+3. Place the coco dataset in the right folder and follow the instructions
 4. You can now start the server with python3 manage.py runserver
 5. On the opened webpage, you can start a new experiment
 
 ### Experimenting 
 1. Configure your experiment by chosing a model, a group of image, the explanation methods you want to compare and click start
 2. You will be able to see all images being processed and clicking an image will open its comparison page where you can check all explanation from different methods.
-3. you can save the link to the explanation and come back later or share it with others. 
+3. You can save the link to the explanation and come back later or share it with others. 
 
 ### Credits & references
 [Stepan Ulyanin](https://medium.com/@stepanulyanin/implementing-grad-cam-in-pytorch-ea0937c31e82) 
